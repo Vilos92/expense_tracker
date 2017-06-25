@@ -34,32 +34,30 @@ class FlaskDbTest(FlaskTest):
 
 
 class AuthTest(FlaskDbTest):
+    TEST_NAME = 'test_user'
+    TEST_PASSWORD = 'P21AJ5eQWC'
+
     def test_hash_password(self):
         salt = bcrypt.gensalt()
         self.assertEqual(len(salt), 29)
 
-        password = 'P21AJ5eQWC'
-        hashed_password = hash_password(salt, password)
+        hashed_password = hash_password(salt, self.TEST_PASSWORD)
         self.assertEqual(len(hashed_password), 60)
 
     def test_create_user(self):
-        name = 'test_user'
-        user_query = db.session.query(User).filter(User.name == name)
+        user_query = db.session.query(User).filter(User.name == self.TEST_NAME)
         self.assertIsNone(user_query.first())
 
-        self.create_test_user(name=name)
+        self.create_test_user(name=self.TEST_NAME)
         self.assertIsNotNone(user_query.first())
 
 
     def test_authenticate_user(self):
-        name = 'test_user'
-        password = 'P21AJ5eQWC'
-
-        user = authenticate_user(name, password)
+        user = authenticate_user(self.TEST_NAME, self.TEST_PASSWORD)
         self.assertIsNone(user)
 
-        user_A = self.create_test_user(name=name, password=password)
-        user_B = authenticate_user(name, password)
+        user_A = self.create_test_user(name=self.TEST_NAME, password=self.TEST_PASSWORD)
+        user_B = authenticate_user(self.TEST_NAME, self.TEST_PASSWORD)
         self.assertIsNotNone(user_A)
         self.assertIsNotNone(user_B)
         self.assertEqual(user_A, user_B)
@@ -69,8 +67,7 @@ class AuthTest(FlaskDbTest):
         user = get_user(user_id=1)
         self.assertIsNone(user)
 
-        name = 'test_user'
-        user_A = self.create_test_user(name=name)
+        user_A = self.create_test_user(name=self.TEST_NAME)
         user_B = get_user(user_id=user_A.id)
         self.assertIsNotNone(user_A)
         self.assertIsNotNone(user_B)
@@ -80,21 +77,23 @@ class AuthTest(FlaskDbTest):
 class JwtTest(FlaskDbTest):
     AUTH_URL = '/auth'
 
+    TEST_NAME = 'test_user'
+    TEST_PASSWORD = 'P21AJ5eQWC'
+
+    TEST_DATA = {
+            'username': TEST_NAME,
+            'password': TEST_PASSWORD
+            }
+
     def test_get_auth(self):
-        name = 'test_user'
-        password = 'P21AJ5eQWC'
-
-        data = {
-                'username': name,
-                'password': password
-                }
-
-        response = self.client.post(self.AUTH_URL, content_type='application/json', data=json.dumps(data))
+        response = self.client.post(self.AUTH_URL, content_type='application/json',
+                data=json.dumps(self.TEST_DATA))
         self.assertIsNotNone(response.data)
         self.assert_401(response)
 
-        self.create_test_user(name, password)
-        response = self.client.post(self.AUTH_URL, content_type='application/json', data=json.dumps(data))
+        self.create_test_user(self.TEST_NAME, self.TEST_PASSWORD)
+        response = self.client.post(self.AUTH_URL, content_type='application/json',
+                data=json.dumps(self.TEST_DATA))
         self.assertIsNotNone(response.data)
         self.assertIsNotNone(response.json)
         self.assertIn('access_token', response.json)
@@ -106,16 +105,9 @@ class JwtTest(FlaskDbTest):
         self.assertIsNotNone(response.data)
         self.assert_401(response)
 
-        name = 'test_user'
-        password = 'P21AJ5eQWC'
-
-        data = {
-                'username': name,
-                'password': password
-                }
-
-        self.create_test_user(name, password)
-        response = self.client.post(self.AUTH_URL, content_type='application/json', data=json.dumps(data))
+        self.create_test_user(self.TEST_NAME, self.TEST_PASSWORD)
+        response = self.client.post(self.AUTH_URL, content_type='application/json',
+                data=json.dumps(self.TEST_DATA))
         access_token = response.json['access_token']
 
         jwt_token = 'JWT {}'.format(access_token)
@@ -129,16 +121,9 @@ class JwtTest(FlaskDbTest):
     def test_is_admin(self):
         protected_url = '/test/admin_protected'
 
-        name = 'test_user'
-        password = 'P21AJ5eQWC'
-
-        data = {
-                'username': name,
-                'password': password
-                }
-
-        user = self.create_test_user(name, password)
-        response = self.client.post(self.AUTH_URL, content_type='application/json', data=json.dumps(data))
+        user = self.create_test_user(self.TEST_NAME, self.TEST_PASSWORD)
+        response = self.client.post(self.AUTH_URL, content_type='application/json',
+                data=json.dumps(self.TEST_DATA))
         access_token = response.json['access_token']
 
         jwt_token = 'JWT {}'.format(access_token)
