@@ -1,0 +1,43 @@
+import bcrypt
+
+from flask_app import app, db
+from flask_app.models import User
+
+
+def hash_password(salt, password):
+    combined_password = password + salt.decode('utf-8') + app.secret_key
+    hashed_password = bcrypt.hashpw(combined_password.encode('utf-8'), salt)
+    return hashed_password 
+
+
+def create_new_user(name, password):
+    salt = bcrypt.gensalt()
+    hashed_password = hash_password(salt, password)
+
+    new_user = User(name=name, salt=salt.decode('utf-8'), password=hashed_password.decode('utf-8'))
+    db.session.add(new_user)
+    db.session.commit()
+
+
+def authenticate_user(name, password):
+    query = db.session.query(User.salt).filter(User.name == name)
+    salt = query.scalar().encode('utf-8')
+    if not salt:
+        return None
+    hashed_password = hash_password(salt, password)
+
+    query = (db.session.query(User)
+                    .filter(User.name == name,
+                            User.password == hashed_password.decode('utf-8')))
+    return query.first()
+
+
+def get_user(user_id):
+    query = db.session.query(User).filter(User.id == user_id)
+    return query.first()
+
+
+def user_identity(payload):
+    user_id = payload['identity']
+    user = get_user(user_id)
+    return {'id': user.id, 'name': user.name}

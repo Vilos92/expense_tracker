@@ -1,0 +1,12 @@
+# Vim
+*.swp
+*.swo
+
+# Python
+*.pyc
+
+# Virtualenv
+venv
+
+# Migrations from flask
+flask_migrations
