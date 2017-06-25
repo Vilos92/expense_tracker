@@ -100,7 +100,8 @@ class JwtTest(FlaskDbTest):
         self.assertIn('access_token', response.json)
 
     def test_protected(self):
-        protected_url = '/protected'
+        protected_url = '/test/protected'
+
         response = self.client.get(protected_url)
         self.assertIsNotNone(response.data)
         self.assert_401(response)
@@ -119,6 +120,36 @@ class JwtTest(FlaskDbTest):
 
         jwt_token = 'JWT {}'.format(access_token)
         headers = {'Authorization': jwt_token}
+
+        response = self.client.get(protected_url, headers=headers)
+        self.assertIsNotNone(response.data)
+        self.assert_200(response)
+
+
+    def test_is_admin(self):
+        protected_url = '/test/admin_protected'
+
+        name = 'test_user'
+        password = 'P21AJ5eQWC'
+
+        data = {
+                'username': name,
+                'password': password
+                }
+
+        user = self.create_test_user(name, password)
+        response = self.client.post(self.AUTH_URL, content_type='application/json', data=json.dumps(data))
+        access_token = response.json['access_token']
+
+        jwt_token = 'JWT {}'.format(access_token)
+        headers = {'Authorization': jwt_token}
+
+        response = self.client.get(protected_url, headers=headers)
+        self.assertIsNotNone(response.data)
+        self.assert_401(response)
+
+        user.is_admin = True
+        db.session.commit()
 
         response = self.client.get(protected_url, headers=headers)
         self.assertIsNotNone(response.data)

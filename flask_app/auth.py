@@ -42,4 +42,4 @@ def get_user(user_id):
 def user_identity(payload):
     user_id = payload['identity']
     user = get_user(user_id)
-    return {'id': user.id, 'name': user.name}
+    return user
