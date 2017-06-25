@@ -10,7 +10,7 @@ def hash_password(salt, password):
     return hashed_password 
 
 
-def create_new_user(name, password):
+def create_user(name, password):
     salt = bcrypt.gensalt()
     hashed_password = hash_password(salt, password)
 
@@ -18,13 +18,15 @@ def create_new_user(name, password):
     db.session.add(new_user)
     db.session.commit()
 
+    return new_user
+
 
 def authenticate_user(name, password):
-    query = db.session.query(User.salt).filter(User.name == name)
-    salt = query.scalar().encode('utf-8')
+    salt = db.session.query(User.salt).filter(User.name == name).scalar()
+
     if not salt:
         return None
-    hashed_password = hash_password(salt, password)
+    hashed_password = hash_password(salt.encode('utf-8'), password)
 
     query = (db.session.query(User)
                     .filter(User.name == name,
