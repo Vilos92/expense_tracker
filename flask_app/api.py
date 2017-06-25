@@ -13,16 +13,3 @@ def admin_required(func):
             return abort(401)
         return func(*args, **kwargs)
     return decorated_function
-
-
-@app.route('/test/protected')
-@jwt_required()
-def test_protected():
-    return '%s' % current_identity
-
-
-@app.route('/test/admin_protected')
-@jwt_required()
-@admin_required
-def test_admin_protected():
-    return '%s' % current_identity

@@ -4,6 +4,7 @@ import os
 import bcrypt
 
 from flask import json
+from flask_jwt import jwt_required, current_identity
 from flask_testing import TestCase
 
 from config import ConfigTypes
@@ -11,6 +12,20 @@ from flask_app import app, db
 from flask_app.models import User
 from flask_app.auth import (hash_password, create_user, authenticate_user,
         get_user, user_identity)
+
+
+# Add routes for testing JWT
+@app.route('/test/protected')
+@jwt_required()
+def test_protected():
+    return '%s' % current_identity
+
+
+@app.route('/test/admin_protected')
+@jwt_required()
+@admin_required
+def test_admin_protected():
+    return '%s' % current_identity
 
 
 class FlaskTest(TestCase):
@@ -50,7 +65,6 @@ class AuthTest(FlaskDbTest):
 
         self.create_test_user(name=self.TEST_NAME)
         self.assertIsNotNone(user_query.first())
-
 
     def test_authenticate_user(self):
         user = authenticate_user(self.TEST_NAME, self.TEST_PASSWORD)
