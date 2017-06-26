@@ -8,3 +8,7 @@ logger = logging.getLogger(__name__)
 
 def get_expense(expense_id):
     return Expense.query.filter_by(id = expense_id).first()
+
+
+def get_report(start_timestamp, end_timestamp):
+    return

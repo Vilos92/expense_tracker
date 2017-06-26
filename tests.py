@@ -16,7 +16,7 @@ from flask_app import app, db
 from flask_app.models import User, Expense
 from flask_app.auth import (hash_password, create_user, authenticate_user,
         get_user, user_identity)
-from flask_app.controller import insert_expense
+from flask_app.controller import insert_expense, update_expense
 from flask_app.retriever import get_expense
 
 
@@ -182,21 +182,46 @@ class ExpenseTest(JwtTestUtils):
         first_expense = Expense.query.first()
         self.assertEqual(expense, first_expense)
 
-
     def test_get_expense(self):
         # Expense ID does not exist
         expense = get_expense(1)
         self.assertIsNone(expense)
 
-        # Expense ID does exit
+        # Expense ID does exist
         expense_A = self.insert_test_expense()
         expense_B = get_expense(expense_A.id)
+        expense_C = Expense.query.first()
 
         self.assertEqual(expense_A, expense_B)
-
+        self.assertEqual(expense_B, expense_C)
 
     def test_update_expense(self):
-        pass
+        # Attempt updating an expense which does not exist
+        # RetrievalException
+
+        expense = self.insert_test_expense()
+
+        # Test that ORM returned by update_expense() is the same
+        updated_expense = update_expense(expense_id=expense.id)
+        self.assertEqual(expense, updated_expense)
+
+        # Test updating timestamp
+        new_timestamp = pendulum.now()
+        self.assertNotEqual(datetime_to_pendulum(expense.timestamp), new_timestamp)
+        update_expense(expense_id=expense.id, timestamp=new_timestamp)
+        self.assertEqual(datetime_to_pendulum(expense.timestamp), new_timestamp)
+
+        # Test updating amount
+        new_amount = expense.amount + 10.0
+        self.assertNotEqual(expense.amount, new_amount)
+        update_expense(expense_id=expense.id, amount=new_amount)
+        self.assertEqual(expense.amount, new_amount)
+
+        # Test updating description
+        new_description = "Let's change the description"
+        self.assertNotEqual(expense.description, new_description)
+        updated_expense = update_expense(expense_id=expense.id, description=new_description)
+        self.assertEqual(expense.description, new_description)
 
     def test_delete_expense(self):
         pass

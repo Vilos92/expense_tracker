@@ -60,6 +60,8 @@ class AdminResource(Resource):
 
 class Expense(AuthenticatedResource):
     def get(self):
+        # print(current_identity)
+
         logger.debug('Retrieving expenses from database')
         expenses = []
 
