@@ -61,9 +61,10 @@ class AdminResource(Resource):
 
 class ExpenseList(AuthenticatedResource):
     def get(self):
-        logger.debug('Retrieving expenses from database')
-        expenses = get_expenses()
+        user_id = current_identity.id
 
+        logger.debug('Retrieving expenses from database')
+        expenses = get_expenses(user_id)
         return {'expenses': expenses}
 
 

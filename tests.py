@@ -212,8 +212,8 @@ class ExpenseTest(JwtTestUtils):
 
         # User ID does exist - no expenses
         user = self.create_test_user()
-        with self.assertRaises(DatabaseRetrieveException):
-            get_expenses(user.id)
+        expenses = get_expenses(user.id)
+        self.assertEqual(len(expenses), 0)
 
         # Expenses inserted
         expenses_from_insert = [self.insert_test_expense(user=user) for x in range(10)]
