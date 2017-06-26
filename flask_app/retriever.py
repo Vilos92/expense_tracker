@@ -1,6 +1,6 @@
 import logging
 
-from utils import DatabaseRetrievalException
+from utils import DatabaseRetrieveException
 
 from flask_app import db
 from flask_app.models import Expense
@@ -13,7 +13,7 @@ def get_expense(expense_id):
 
     if not expense:
         warning = 'expense with id = {} does not exist'.format(expense_id)
-        raise DatabaseRetrievalException(warning)
+        raise DatabaseRetrieveException(warning)
 
     return expense
 

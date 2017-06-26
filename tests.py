@@ -10,7 +10,8 @@ from flask_jwt import jwt_required, current_identity
 from flask_testing import TestCase
 
 from config import ConfigTypes
-from utils import datetime_to_pendulum, DatabaseRetrievalException, DatabaseInsertionException
+from utils import (datetime_to_pendulum, DatabaseRetrieveException,
+        DatabaseInsertException, DatabaseUpdateException, DatabaseDeleteException)
 
 from flask_app import app, db
 from flask_app.models import User, Expense
@@ -166,6 +167,14 @@ class ExpenseTest(JwtTestUtils):
         return expense
 
     def test_insert_expense(self):
+        # User ID does not exist
+        user = self.create_test_user()
+        db.session.delete(user)
+        db.session.commit()
+        with self.assertRaises(DatabaseInsertException):
+            expense = self.insert_test_expense(user=user)
+
+        # User ID does exist
         user = self.create_test_user()
         timestamp = pendulum.now()
 
@@ -185,15 +194,8 @@ class ExpenseTest(JwtTestUtils):
 
     def test_get_expense(self):
         # Expense ID does not exist
-        with self.assertRaises(DatabaseRetrievalException):
+        with self.assertRaises(DatabaseRetrieveException):
             get_expense(1)
-
-        # User ID does not exist
-        user = self.create_test_user()
-        db.session.delete(user)
-        db.session.commit()
-        with self.assertRaises(DatabaseInsertionException):
-            expense_A = self.insert_test_expense(user=user)
 
         # Expense ID does exist
         expense_A = self.insert_test_expense()
@@ -204,8 +206,9 @@ class ExpenseTest(JwtTestUtils):
         self.assertEqual(expense_B, expense_C)
 
     def test_update_expense(self):
-        # Attempt updating an expense which does not exist
-        # Retrieval Exception
+        # Test updating an expense which does not exist
+        with self.assertRaises(DatabaseUpdateException):
+            update_expense(expense_id=10)
 
         expense = self.insert_test_expense()
 
@@ -232,15 +235,14 @@ class ExpenseTest(JwtTestUtils):
         self.assertEqual(expense.description, new_description)
 
     def test_delete_expense(self):
-        # Attempt updating an expense which does not exist
-        # Deletion Exception
+        with self.assertRaises(DatabaseDeleteException):
+            delete_expense(1)
 
         expense = self.insert_test_expense()
         expense_query = Expense.query.filter_by(id = expense.id)
+
         self.assertIsNotNone(expense_query.first())
-
         delete_expense(expense.id)
-
         self.assertIsNone(expense_query.first())
 
 

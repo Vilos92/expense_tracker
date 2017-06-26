@@ -12,16 +12,21 @@ def datetime_to_pendulum(datetime_object):
     return pendulum.instance(datetime_object)
 
 
-class DatabaseInsertionException(Exception):
+class DatabaseInsertException(Exception):
     def __init__(self, *args, **kwargs):
         Exception.__init__(self, *args, **kwargs)
 
 
-class DatabaseDeletionException(Exception):
+class DatabaseUpdateException(Exception):
     def __init__(self, *args, **kwargs):
         Exception.__init__(self, *args, **kwargs)
 
 
-class DatabaseRetrievalException(Exception):                                                             
+class DatabaseRetrieveException(Exception):                                                             
+    def __init__(self, *args, **kwargs):
+        Exception.__init__(self, *args, **kwargs)
+
+
+class DatabaseDeleteException(Exception):
     def __init__(self, *args, **kwargs):
         Exception.__init__(self, *args, **kwargs)
