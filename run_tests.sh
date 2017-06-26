@@ -11,4 +11,18 @@ export DB_USER=$PROJECT_NAME
 
 . create_postgres_container.sh
 
-nosetests tests.py
+if [ -z $1 ]; then
+    module=''
+else
+    module=':'$1
+fi
+
+if [ -z $2 ]; then
+    method=''
+else
+    method='.'$2
+fi
+
+cmd='nosetests tests.py'$module$method
+echo $cmd
+eval $cmd
