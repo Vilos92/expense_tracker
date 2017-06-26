@@ -90,15 +90,18 @@ class JwtTestUtils(DbTestUtils):
     TEST_NAME = 'test_user'
     TEST_PASSWORD = 'P21AJ5eQWC'
 
-    TEST_DATA = {
-            'username': TEST_NAME,
-            'password': TEST_PASSWORD
+    def create_test_data(self, name=TEST_NAME):
+        return {
+            'username': name,
+            'password': self.TEST_PASSWORD
             }
 
-    def create_jwt_test_user(self):
-        user = self.create_test_user(self.TEST_NAME, self.TEST_PASSWORD)
+    def create_jwt_test_user(self, name=TEST_NAME):
+        user = self.create_test_user(name, self.TEST_PASSWORD)
+        data = self.create_test_data(name=name)
+
         response = self.client.post(self.AUTH_URL, content_type='application/json',
-                data=json.dumps(self.TEST_DATA))
+                data=json.dumps(data))
         access_token = response.json['access_token']
 
         jwt_token = 'JWT {}'.format(access_token)
@@ -109,14 +112,16 @@ class JwtTestUtils(DbTestUtils):
 
 class JwtTest(JwtTestUtils):
     def test_get_auth(self):
+        test_data = self.create_test_data()
+
         response = self.client.post(self.AUTH_URL, content_type='application/json',
-                data=json.dumps(self.TEST_DATA))
+                data=json.dumps(test_data))
         self.assert_401(response)
         self.assertIsNotNone(response.data)
 
         self.create_test_user(self.TEST_NAME, self.TEST_PASSWORD)
         response = self.client.post(self.AUTH_URL, content_type='application/json',
-                data=json.dumps(self.TEST_DATA))
+                data=json.dumps(test_data))
         self.assertIsNotNone(response.data)
         self.assertIsNotNone(response.json)
         self.assertIn('access_token', response.json)
@@ -200,10 +205,22 @@ class ExpenseTest(JwtTestUtils):
         # Expense ID does exist
         expense_A = self.insert_test_expense()
         expense_B = get_expense(expense_A.id)
-        expense_C = Expense.query.first()
+        expense_C = Expense.query.filter_by(id = expense_A.id).first()
 
         self.assertEqual(expense_A, expense_B)
         self.assertEqual(expense_B, expense_C)
+
+        # Expense ID does exist, wrong user_id
+        user = self.create_test_user(name='test_user_temp')
+        expense = self.insert_test_expense(user)
+        with self.assertRaises(DatabaseRetrieveException):
+            get_expense(expense.id, user_id=user.id + 1)
+
+        # Expense ID does exist, correct user_id
+        try:
+            get_expense(expense.id, user_id=user.id)
+        except DatabaseRetrieveException as e:
+            self.fail(e)
 
     def test_get_expenses(self):
         # User ID does not exist
@@ -266,8 +283,12 @@ class ExpenseApiTest(ExpenseTest):
     with app.test_request_context():
         EXPENSE_LIST_URL = url_for('expenselist')
 
+    def get_expense_url(self, expense_id):
+        with app.test_request_context():
+            return url_for('expense', expense_id=expense_id)
+
     def test_expenses_get(self):
-        # GET without authentication
+        # GET - without authentication
         response = self.client.get(self.EXPENSE_LIST_URL)
         self.assert_401(response)
         self.assertIsNotNone(response.data)
@@ -293,6 +314,26 @@ class ExpenseApiTest(ExpenseTest):
 
         response_expenses = response_json['expenses']
         self.assertEqual(len(response_expenses), num_expenses)
+
+    def test_expense_get(self):
+        user_1, headers_1 = self.create_jwt_test_user(name='test_user_1')
+        user_2, headers_2 = self.create_jwt_test_user(name='test_user_2')
+
+        # GET  - without authentication
+        response = self.client.get(self.get_expense_url(1))
+        self.assert_401(response)
+        self.assertIsNotNone(response.data)
+        
+        # GET - expense_id does not belong to user
+        expense = self.insert_test_expense(user=user_1)
+        expense_url = self.get_expense_url(expense.id)
+        response = self.client.get(expense_url, headers=headers_2)
+        self.assert_200(response)
+        self.assertIsNone(response.json)
+
+        # GET - expense_id belongs to user
+
+        # GET - expense_id does not belong to user, but user is an admin
 
 
 if __name__ == '__main__':

@@ -9,12 +9,20 @@ from flask_app.auth import user_exists
 logger = logging.getLogger(__name__)
 
 
-def get_expense(expense_id):
-    expense = Expense.query.filter_by(id = expense_id).first()
+def get_expense(expense_id, user_id=None):
+    query = Expense.query.filter_by(id = expense_id)
 
-    if not expense:
-        warning = 'expense with id = {} does not exist'.format(expense_id)
-        raise DatabaseRetrieveException(warning)
+    if user_id:
+         expense = query.filter_by(user_id = user_id).first()
+         if not expense:
+            warning = 'expense with id = {} and user with id = {} does not exist'.format(
+                     expense_id, user_id)
+            raise DatabaseRetrieveException(warning)
+    else:
+        expense = query.first()
+        if not expense:
+            warning = 'expense with id = {} does not exist'.format(expense_id)
+            raise DatabaseRetrieveException(warning)
 
     return expense
 

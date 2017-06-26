@@ -63,7 +63,7 @@ class ExpenseList(AuthenticatedResource):
     def get(self):
         user_id = current_identity.id
 
-        logger.debug('Retrieving expenses from database')
+        logger.debug('Retrieving expenses for user with id = {}'.format(user_id))
         expenses = get_expenses(user_id)
 
         expense_dicts = [expense.to_dict() for expense in expenses]
@@ -72,10 +72,11 @@ class ExpenseList(AuthenticatedResource):
 
 class Expense(AuthenticatedResource):
     def get(self, expense_id):
-        logger.debug('Retrieving expense from database')
-        expense = get_expense(expense_id)
+        user_id = current_identity.id
 
-        return {'expense': expense}
+        logger.debug('Retrieving expense with id = {}'.format(expense_id))
+        expense = get_expense(expense_id, user_id=user_id)
+        return {'expense': expense.to_dict()}
 
 
 rest_api.add_resource(ExpenseList, '/api/expense')
