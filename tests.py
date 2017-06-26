@@ -346,6 +346,9 @@ class ExpenseApiTest(ExpenseTest):
         self.assertIsNotNone(response.json)
 
         # GET - expense_id does not belong to user, but user is an admin
+        user_2.is_admin = True
+        db.session.commit()
+
         response = self.client.get(expense_url, headers=headers_2)
         self.assert_200(response)
         self.assertIsNotNone(response.json)
