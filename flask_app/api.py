@@ -1,6 +1,8 @@
 import logging
 from functools import wraps
 
+from utils import DatabaseRetrieveException
+
 from flask import jsonify
 from flask_restful import Resource
 from flask_jwt import jwt_required, current_identity
@@ -75,7 +77,11 @@ class Expense(AuthenticatedResource):
         user_id = current_identity.id
 
         logger.debug('Retrieving expense with id = {}'.format(expense_id))
-        expense = get_expense(expense_id, user_id=user_id)
+        try:
+            expense = get_expense(expense_id, user_id=user_id)
+        except DatabaseRetrieveException as e:
+            raise InvalidRequest(str(e), 401)
+
         return {'expense': expense.to_dict()}
 
 

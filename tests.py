@@ -211,14 +211,23 @@ class ExpenseTest(JwtTestUtils):
         self.assertEqual(expense_B, expense_C)
 
         # Expense ID does exist, wrong user_id
-        user = self.create_test_user(name='test_user_temp')
-        expense = self.insert_test_expense(user)
+        user_1 = self.create_test_user(name='test_user_1')
+        user_2 = self.create_test_user(name='test_user_2')
+        expense = self.insert_test_expense(user_1)
         with self.assertRaises(DatabaseRetrieveException):
-            get_expense(expense.id, user_id=user.id + 1)
+            get_expense(expense.id, user_id=user_2.id)
 
         # Expense ID does exist, correct user_id
         try:
-            get_expense(expense.id, user_id=user.id)
+            get_expense(expense.id, user_id=user_1.id)
+        except DatabaseRetrieveException as e:
+            self.fail(e)
+
+        # Expense ID does exist, wrong user_id but is_admin == True
+        user_2.is_admin = True
+        db.session.commit()
+        try:
+            get_expense(expense.id, user_id=user_2.id)
         except DatabaseRetrieveException as e:
             self.fail(e)
 
@@ -323,17 +332,23 @@ class ExpenseApiTest(ExpenseTest):
         response = self.client.get(self.get_expense_url(1))
         self.assert_401(response)
         self.assertIsNotNone(response.data)
-        
+
         # GET - expense_id does not belong to user
         expense = self.insert_test_expense(user=user_1)
         expense_url = self.get_expense_url(expense.id)
+
         response = self.client.get(expense_url, headers=headers_2)
-        self.assert_200(response)
-        self.assertIsNone(response.json)
+        self.assert_401(response)
 
         # GET - expense_id belongs to user
+        response = self.client.get(expense_url, headers=headers_1)
+        self.assert_200(response)
+        self.assertIsNotNone(response.json)
 
         # GET - expense_id does not belong to user, but user is an admin
+        response = self.client.get(expense_url, headers=headers_2)
+        self.assert_200(response)
+        self.assertIsNotNone(response.json)
 
 
 if __name__ == '__main__':
