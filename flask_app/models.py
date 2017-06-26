@@ -30,3 +30,27 @@ class User(Base):
 
     def __repr__(self):
         return '<User %r>' % self.name
+
+
+class Expense(Base):
+    __tablename__ = 'expense'
+
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User', backref='expenses')
+
+    timestamp = db.Column(db.DateTime, index=True, nullable=False)
+    #amount = db.Column(db.Integer, nullable=False) # Float?
+    description = db.Column(db.String(), nullable=False)
+
+    def __init__(self, user_id, description, amount, timestamp=None):
+        self.user_id = user_id
+
+        if timestamp is None:
+            timestamp = datetime.utcnow()
+        self.timestamp = timestamp
+
+        self.amount = amount
+        self.description = description
+
+    def __repr__(self):
+        return '<Expense %r>' % self.id

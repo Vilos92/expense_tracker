@@ -3,7 +3,7 @@ import os
 
 import bcrypt
 
-from flask import json
+from flask import json, url_for
 from flask_jwt import jwt_required, current_identity
 from flask_testing import TestCase
 
@@ -12,20 +12,6 @@ from flask_app import app, db
 from flask_app.models import User
 from flask_app.auth import (hash_password, create_user, authenticate_user,
         get_user, user_identity)
-
-
-# Add routes for testing JWT
-@app.route('/test/protected')
-@jwt_required()
-def test_protected():
-    return '%s' % current_identity
-
-
-@app.route('/test/admin_protected')
-@jwt_required()
-@admin_required
-def test_admin_protected():
-    return '%s' % current_identity
 
 
 class FlaskTest(TestCase):
@@ -76,7 +62,6 @@ class AuthTest(FlaskDbTest):
         self.assertIsNotNone(user_B)
         self.assertEqual(user_A, user_B)
 
-
     def test_get_user(self):
         user = get_user(user_id=1)
         self.assertIsNone(user)
@@ -89,7 +74,10 @@ class AuthTest(FlaskDbTest):
 
 
 class JwtTest(FlaskDbTest):
-    AUTH_URL = '/auth'
+    AUTH_REQUEST_HANDLER_STR = '_default_auth_request_handler'
+
+    with app.test_request_context():
+        AUTH_URL = url_for(AUTH_REQUEST_HANDLER_STR)
 
     TEST_NAME = 'test_user'
     TEST_PASSWORD = 'P21AJ5eQWC'
@@ -113,7 +101,8 @@ class JwtTest(FlaskDbTest):
         self.assertIn('access_token', response.json)
 
     def test_protected(self):
-        protected_url = '/test/protected'
+        with app.test_request_context():
+            protected_url = url_for('test_protected')
 
         response = self.client.get(protected_url)
         self.assertIsNotNone(response.data)
@@ -133,7 +122,8 @@ class JwtTest(FlaskDbTest):
 
 
     def test_is_admin(self):
-        protected_url = '/test/admin_protected'
+        with app.test_request_context():
+            protected_url = url_for('test_admin_protected')
 
         user = self.create_test_user(self.TEST_NAME, self.TEST_PASSWORD)
         response = self.client.post(self.AUTH_URL, content_type='application/json',
@@ -153,6 +143,14 @@ class JwtTest(FlaskDbTest):
         response = self.client.get(protected_url, headers=headers)
         self.assertIsNotNone(response.data)
         self.assert_200(response)
+
+
+class Expense(FlaskDbTest):
+    with app.test_request_context():
+        EXPENSES_URL = url_for('expense')
+
+    def test_expenses(self):
+        pass
 
 
 if __name__ == '__main__':
