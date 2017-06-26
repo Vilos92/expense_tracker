@@ -266,7 +266,7 @@ class ExpenseApiTest(ExpenseTest):
     with app.test_request_context():
         EXPENSE_LIST_URL = url_for('expenselist')
 
-    def test_expense_api(self):
+    def test_expenses_get(self):
         # GET without authentication
         response = self.client.get(self.EXPENSE_LIST_URL)
         self.assert_401(response)
@@ -276,7 +276,6 @@ class ExpenseApiTest(ExpenseTest):
         user, headers = self.create_jwt_test_user()
         response = self.client.get(self.EXPENSE_LIST_URL, headers=headers)
         self.assert_200(response)
-        self.assertIsNotNone(response.data)
         self.assertIsNotNone(response.json)
 
         expenses = response.json['expenses']
@@ -289,7 +288,11 @@ class ExpenseApiTest(ExpenseTest):
             expense = self.insert_test_expense(user=user)
             expense_ids.append(expense.id)
         response = self.client.get(self.EXPENSE_LIST_URL, headers=headers)
-        self.assertIsNone(response.json)
+        response_json = response.json
+        self.assertIsNotNone(response_json)
+
+        response_expenses = response_json['expenses']
+        self.assertEqual(len(response_expenses), num_expenses)
 
 
 if __name__ == '__main__':

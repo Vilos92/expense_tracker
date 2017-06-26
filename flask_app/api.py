@@ -65,7 +65,9 @@ class ExpenseList(AuthenticatedResource):
 
         logger.debug('Retrieving expenses from database')
         expenses = get_expenses(user_id)
-        return {'expenses': expenses}
+
+        expense_dicts = [expense.to_dict() for expense in expenses]
+        return {'expenses': expense_dicts}
 
 
 class Expense(AuthenticatedResource):

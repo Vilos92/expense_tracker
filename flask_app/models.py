@@ -1,3 +1,5 @@
+from utils import datetime_to_pendulum
+
 from flask_app import db
 
 
@@ -50,3 +52,14 @@ class Expense(Base):
 
     def __repr__(self):
         return '<Expense %r>' % self.id
+
+    def to_dict(self):
+        dt = datetime_to_pendulum(self.timestamp)
+        timestamp = dt.to_iso8601_string()
+
+        return {
+                'user_id': self.user_id,
+                'timestamp': timestamp,
+                'amount': self.amount,
+                'description': self.description
+                }
