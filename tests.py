@@ -10,12 +10,13 @@ from flask_jwt import jwt_required, current_identity
 from flask_testing import TestCase
 
 from config import ConfigTypes
-from utils import datetime_to_pendulum
+from utils import datetime_to_pendulum, DatabaseRetrievalException, DatabaseInsertionException
 
 from flask_app import app, db
 from flask_app.models import User, Expense
 from flask_app.auth import (hash_password, create_user, authenticate_user,
         get_user, user_identity)
+
 from flask_app.controller import insert_expense, update_expense, delete_expense
 from flask_app.retriever import get_expense
 
@@ -184,8 +185,15 @@ class ExpenseTest(JwtTestUtils):
 
     def test_get_expense(self):
         # Expense ID does not exist
-        expense = get_expense(1)
-        self.assertIsNone(expense)
+        with self.assertRaises(DatabaseRetrievalException):
+            get_expense(1)
+
+        # User ID does not exist
+        user = self.create_test_user()
+        db.session.delete(user)
+        db.session.commit()
+        with self.assertRaises(DatabaseInsertionException):
+            expense_A = self.insert_test_expense(user=user)
 
         # Expense ID does exist
         expense_A = self.insert_test_expense()

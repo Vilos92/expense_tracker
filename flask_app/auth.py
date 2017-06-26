@@ -37,6 +37,10 @@ def get_user(user_id):
     return User.query.filter_by(id = user_id).first()
 
 
+def user_exists(user_id):
+    return get_user(user_id) != None
+
+
 def user_identity(payload):
     user_id = payload['identity']
     user = get_user(user_id)
