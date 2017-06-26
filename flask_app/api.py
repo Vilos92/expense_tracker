@@ -58,7 +58,7 @@ class AdminResource(Resource):
     method_decorators = [admin_required]
 
 
-class Expense(AdminResource):
+class Expense(AuthenticatedResource):
     def get(self):
         logger.debug('Retrieving expenses from database')
         expenses = []

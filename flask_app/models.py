@@ -38,17 +38,13 @@ class Expense(Base):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User', backref='expenses')
 
-    timestamp = db.Column(db.DateTime, index=True, nullable=False)
-    #amount = db.Column(db.Integer, nullable=False) # Float?
+    timestamp = db.Column(db.DateTime(), index=True, nullable=False)
+    amount = db.Column(db.Float(), nullable=False)
     description = db.Column(db.String(), nullable=False)
 
-    def __init__(self, user_id, description, amount, timestamp=None):
+    def __init__(self, user_id, timestamp, description, amount):
         self.user_id = user_id
-
-        if timestamp is None:
-            timestamp = datetime.utcnow()
         self.timestamp = timestamp
-
         self.amount = amount
         self.description = description
 

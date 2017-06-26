@@ -28,15 +28,13 @@ def authenticate_user(name, password):
         return None
     hashed_password = hash_password(salt.encode('utf-8'), password)
 
-    query = (db.session.query(User)
-                    .filter(User.name == name,
-                            User.password == hashed_password.decode('utf-8')))
+    query = (User.query.filter(User.name == name,
+                                User.password == hashed_password.decode('utf-8')))
     return query.first()
 
 
 def get_user(user_id):
-    query = db.session.query(User).filter(User.id == user_id)
-    return query.first()
+    return User.query.filter_by(id = user_id).first()
 
 
 def user_identity(payload):
