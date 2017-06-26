@@ -223,14 +223,6 @@ class ExpenseTest(JwtTestUtils):
         except DatabaseRetrieveException as e:
             self.fail(e)
 
-        # Expense ID does exist, wrong user_id but is_admin == True
-        user_2.is_admin = True
-        db.session.commit()
-        try:
-            get_expense(expense.id, user_id=user_2.id)
-        except DatabaseRetrieveException as e:
-            self.fail(e)
-
     def test_get_expenses(self):
         # User ID does not exist
         with self.assertRaises(DatabaseRetrieveException):

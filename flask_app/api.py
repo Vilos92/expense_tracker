@@ -74,11 +74,14 @@ class ExpenseList(AuthenticatedResource):
 
 class Expense(AuthenticatedResource):
     def get(self, expense_id):
-        user_id = current_identity.id
+        user = current_identity
 
         logger.debug('Retrieving expense with id = {}'.format(expense_id))
         try:
-            expense = get_expense(expense_id, user_id=user_id)
+            if user.is_admin:
+                expense = get_expense(expense_id)
+            else:
+                expense = get_expense(expense_id, user_id=user.id)
         except DatabaseRetrieveException as e:
             raise InvalidRequest(str(e), 401)
 
