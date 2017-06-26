@@ -32,6 +32,14 @@ def update_expense(expense_id, timestamp=None, amount=None, description=None):
     return expense
 
 
-def remove_expense(expense_id):
+def delete_expense(expense_id):
     # Decouple this from permission
-    expense = Expense.query.filter_by(id = expense_id)
+
+    expense = Expense.query.filter_by(id = expense_id).first()
+
+    if not expense:
+        # Raise removal warning
+        pass
+
+    db.session.delete(expense)
+    db.session.commit()

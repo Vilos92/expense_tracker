@@ -16,7 +16,7 @@ from flask_app import app, db
 from flask_app.models import User, Expense
 from flask_app.auth import (hash_password, create_user, authenticate_user,
         get_user, user_identity)
-from flask_app.controller import insert_expense, update_expense
+from flask_app.controller import insert_expense, update_expense, delete_expense
 from flask_app.retriever import get_expense
 
 
@@ -197,7 +197,7 @@ class ExpenseTest(JwtTestUtils):
 
     def test_update_expense(self):
         # Attempt updating an expense which does not exist
-        # RetrievalException
+        # Retrieval Exception
 
         expense = self.insert_test_expense()
 
@@ -224,7 +224,16 @@ class ExpenseTest(JwtTestUtils):
         self.assertEqual(expense.description, new_description)
 
     def test_delete_expense(self):
-        pass
+        # Attempt updating an expense which does not exist
+        # Deletion Exception
+
+        expense = self.insert_test_expense()
+        expense_query = Expense.query.filter_by(id = expense.id)
+        self.assertIsNotNone(expense_query.first())
+
+        delete_expense(expense.id)
+
+        self.assertIsNone(expense_query.first())
 
 
 class ExpenseApi(JwtTestUtils):
