@@ -6,6 +6,7 @@ from flask_restful import Resource
 from flask_jwt import jwt_required, current_identity
 
 from flask_app import app, rest_api
+from flask_app.retriever import get_expense, get_expenses
 
 logger = logging.getLogger(__name__)
 
@@ -58,13 +59,21 @@ class AdminResource(Resource):
     method_decorators = [admin_required]
 
 
-class Expense(AuthenticatedResource):
+class ExpenseList(AuthenticatedResource):
     def get(self):
-        # print(current_identity)
-
         logger.debug('Retrieving expenses from database')
-        expenses = []
+        expenses = get_expenses()
 
         return {'expenses': expenses}
 
-rest_api.add_resource(Expense, '/api/expense')
+
+class Expense(AuthenticatedResource):
+    def get(self, expense_id):
+        logger.debug('Retrieving expense from database')
+        expense = get_expense(expense_id)
+
+        return {'expense': expense}
+
+
+rest_api.add_resource(ExpenseList, '/api/expense')
+rest_api.add_resource(Expense, '/api/expense/<int:expense_id>')

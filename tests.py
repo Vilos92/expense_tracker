@@ -19,7 +19,7 @@ from flask_app.auth import (hash_password, create_user, authenticate_user,
         get_user, user_identity)
 
 from flask_app.controller import insert_expense, update_expense, delete_expense
-from flask_app.retriever import get_expense
+from flask_app.retriever import get_expense, get_expenses
 
 
 class FlaskTest(TestCase):
@@ -205,6 +205,22 @@ class ExpenseTest(JwtTestUtils):
         self.assertEqual(expense_A, expense_B)
         self.assertEqual(expense_B, expense_C)
 
+    def test_get_expenses(self):
+        # User ID does not exist
+        with self.assertRaises(DatabaseRetrieveException):
+            get_expenses(1)
+
+        # User ID does exist - no expenses
+        user = self.create_test_user()
+        with self.assertRaises(DatabaseRetrieveException):
+            get_expenses(user.id)
+
+        # Expenses inserted
+        expenses_from_insert = [self.insert_test_expense(user=user) for x in range(10)]
+        expenses_from_get = get_expenses(user.id)
+        self.assertEqual(len(expenses_from_insert), len(expenses_from_get))
+        self.assertEqual(expenses_from_insert, expenses_from_get)
+
     def test_update_expense(self):
         # Test updating an expense which does not exist
         with self.assertRaises(DatabaseUpdateException):
@@ -246,19 +262,19 @@ class ExpenseTest(JwtTestUtils):
         self.assertIsNone(expense_query.first())
 
 
-class ExpenseApi(JwtTestUtils):
+class ExpenseApiTest(ExpenseTest):
     with app.test_request_context():
-        EXPENSE_URL = url_for('expense')
+        EXPENSE_LIST_URL = url_for('expenselist')
 
     def test_expense_api(self):
-        # Request expense API without authentication
-        response = self.client.get(self.EXPENSE_URL)
+        # GET without authentication
+        response = self.client.get(self.EXPENSE_LIST_URL)
         self.assert_401(response)
         self.assertIsNotNone(response.data)
 
-        # Request expense API with authentication - no expenses
+        # GET - with authentication - no expenses
         user, headers = self.create_jwt_test_user()
-        response = self.client.get(self.EXPENSE_URL, headers=headers)
+        response = self.client.get(self.EXPENSE_LIST_URL, headers=headers)
         self.assert_200(response)
         self.assertIsNotNone(response.data)
         self.assertIsNotNone(response.json)
@@ -266,17 +282,14 @@ class ExpenseApi(JwtTestUtils):
         expenses = response.json['expenses']
         self.assertEqual(len(expenses), 0)
 
-
-        # Request expense API with authentication - several expenses
-        '''
-        user, headers = self.create_jwt_test_user()
-        response = self.client.get(self.EXPENSE_URL, headers=headers)
-        self.assert_200(response)
-        self.assertIsNotNone(response.data)
-        self.assertIsNotNone(response.json)
-
-        expenses = response.json['expenses']
-        #self.assertEqual(len(expenses), -1)'''
+        # GET - several expenses
+        num_expenses = 10
+        expense_ids = []
+        for x in range(0, num_expenses):
+            expense = self.insert_test_expense(user=user)
+            expense_ids.append(expense.id)
+        response = self.client.get(self.EXPENSE_LIST_URL, headers=headers)
+        self.assertIsNone(response.json)
 
 
 if __name__ == '__main__':
