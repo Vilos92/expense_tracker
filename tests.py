@@ -33,6 +33,9 @@ class FlaskTest(TestCase):
         self.assertEqual(response.status_code, 422)
         self.assertIn('message', response.json)
 
+    def assertSuccessIsTrue(self, response):
+        self.assertEqual(response.json['success'], True)
+
 
 class DbTestUtils(FlaskTest):
     def create_test_user(self, name='test_user', password='XDjVGeLvmT'):
@@ -274,13 +277,21 @@ class ExpenseTest(JwtTestUtils):
         self.assertEqual(expense.description, new_description)
 
     def test_delete_expense(self):
+        # Expense does not exist
         with self.assertRaises(DatabaseDeleteException):
             delete_expense(1)
 
         expense = self.insert_test_expense()
         expense_query = Expense.query.filter_by(id = expense.id)
-
         self.assertIsNotNone(expense_query.first())
+
+        # Expense exists, but wrong user
+        wrong_user = self.create_test_user(name='wrong_user')
+        with self.assertRaises(DatabaseDeleteException):
+            delete_expense(expense.id, user_id=wrong_user.id)
+        self.assertIsNotNone(expense_query.first())
+
+        # Expense exists, and correct user
         delete_expense(expense.id)
         self.assertIsNone(expense_query.first())
 
@@ -373,10 +384,12 @@ class ExpenseApiTest(ExpenseTest):
                 headers=headers, data=json.dumps(data))
         self.assert_200(response)
         self.assertIsNotNone(response.json)
+        self.assertSuccessIsTrue(response)
         expense_json = response.json['expense']
         self.assertEqual(expense_json['user_id'], user.id)
 
     def test_expense_put(self):
+        pass
         # PUT - without authentication
 
         # PUT - with authentication, but wrong user
@@ -386,6 +399,7 @@ class ExpenseApiTest(ExpenseTest):
         # PUT - data included
 
     def test_expense_delete(self):
+        pass
         # DELETE - without authentication
 
         # DELETE - with authentication, but wrong user

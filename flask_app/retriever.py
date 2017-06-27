@@ -11,18 +11,18 @@ logger = logging.getLogger(__name__)
 def get_expense(expense_id, user_id=None):
     query = Expense.query.filter_by(id = expense_id)
 
-    if not user_id:
-        # If user_id not specified, can retrieve any expense
-        expense = query.first()
-        if not expense:
-            warning = 'expense with id = {} does not exist'.format(expense_id)
-            raise DatabaseRetrieveException(warning)
-    else:
-         # Expense must belong to user_id
+    if user_id:
+         # Expense must belong to a user_id
          expense = query.filter_by(user_id = user_id).first()
          if not expense:
             warning = 'expense with id = {} and user with id = {} does not exist'.format(
                      expense_id, user_id)
+            raise DatabaseRetrieveException(warning)
+    else:
+        # If user_id not specified, can retrieve any expense
+        expense = query.first()
+        if not expense:
+            warning = 'expense with id = {} does not exist'.format(expense_id)
             raise DatabaseRetrieveException(warning)
 
     return expense

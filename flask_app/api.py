@@ -102,6 +102,8 @@ class Expense(AuthenticatedResource):
         expense = insert_expense(user_id, timestamp, amount, description)
         return {'success': True, 'expense': expense.to_dict()}
 
+rest_api.add_resource(Expense, '/api/expense')
+
 
 class ExpenseItem(AuthenticatedResource):
     def get(self, expense_id):
@@ -119,8 +121,17 @@ class ExpenseItem(AuthenticatedResource):
         return {'expense': expense.to_dict()}
 
     def delete(self, expense_id):
-        pass
+        user = current_identity
 
+        logger.debug('Retrieving expense with id = {}'.format(expense_id))
+        try:
+            if user.is_admin:
+                expense = delete_expense(expense_id)
+            else:
+                expense = delete_expense(expense_id, user_id=user.id)
+        except DatabaseDeleteException as e:
+            raise InvalidRequest(str(e), 401)
 
-rest_api.add_resource(Expense, '/api/expense')
+        return {'success': True}
+
 rest_api.add_resource(ExpenseItem, '/api/expense/<int:expense_id>')

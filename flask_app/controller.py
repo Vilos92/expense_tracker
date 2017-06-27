@@ -1,10 +1,12 @@
 import logging
 
-from utils import DatabaseInsertException, DatabaseUpdateException, DatabaseDeleteException
+from utils import (DatabaseInsertException, DatabaseRetrieveException,
+        DatabaseUpdateException, DatabaseDeleteException)
 
 from flask_app import db
 from flask_app.models import Expense
 from flask_app.auth import user_exists
+from flask_app.retriever import get_expense
 
 logger = logging.getLogger(__name__)
 
@@ -39,11 +41,11 @@ def update_expense(expense_id, timestamp=None, amount=None, description=None):
     return expense
 
 
-def delete_expense(expense_id):
-    expense = Expense.query.filter_by(id = expense_id).first()
-    if not expense:
-        warning = 'expense with id = {} does not exist'.format(expense_id)
-        raise DatabaseDeleteException(warning)
+def delete_expense(expense_id, user_id=None):
+    try:
+        expense = get_expense(expense_id, user_id)
+    except DatabaseRetrieveException as e:
+        raise DatabaseDeleteException(e)
 
     db.session.delete(expense)
     db.session.commit()
