@@ -529,9 +529,24 @@ class ReportTest(ExpenseTestUtils):
         self.assertEqual(len(report_expenses), num_expenses)
 
     def test_get_report_filter_before(self):
+        user, headers = self.create_jwt_test_user()
+        cutoff_dt = pendulum.now()
+
         # Get report for user before date - none
+        after_cutoff_dt = cutoff_dt.add(days=1)
+        self.insert_test_expense(user=user, timestamp=after_cutoff_dt)
+        report = get_report(user.id, end_timestamp=cutoff_dt)
+        report_expenses = report['expenses']
+        self.assertEqual(len(report_expenses), 0)
+
         # Get report for user before date - several
-        pass
+        before_cutoff_dt = cutoff_dt.subtract(days=1)
+        num_expenses = 10
+        for x in range(num_expenses):
+            self.insert_test_expense(user=user, timestamp=before_cutoff_dt)
+        report = get_report(user.id, end_timestamp=cutoff_dt)
+        report_expenses = report['expenses']
+        self.assertEqual(len(report_expenses), num_expenses)
 
     def test_get_report_filter_between(self):
         # Get report for user between dates - none
