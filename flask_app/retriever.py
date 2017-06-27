@@ -28,11 +28,19 @@ def get_expense(expense_id, user_id=None):
     return expense
 
 
-def get_expenses(user_id):
-    return Expense.query.filter_by(user_id = user_id).all()
+def get_expenses(user_id, start_timestamp=None, end_timestamp=None):
+    query = Expense.query.filter_by(user_id = user_id)
+
+    if start_timestamp:
+        query = query.filter(Expense.timestamp >= start_timestamp)
+
+    if end_timestamp:
+        query = query.filter(Expense.timestamp <= end_timestamp)
+
+    return query.all()
 
 
 def get_report(user_id, start_timestamp=None, end_timestamp=None):
-    expenses = get_expenses(user_id)
+    expenses = get_expenses(user_id, start_timestamp, end_timestamp)
 
     return {'expenses': expenses}
