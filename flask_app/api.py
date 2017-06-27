@@ -1,7 +1,7 @@
 import logging
 from functools import wraps
 
-from utils import DatabaseRetrieveException
+from utils import DatabaseRetrieveException, DatabaseDeleteException
 
 from flask import jsonify, request
 from flask_restful import Resource
@@ -9,7 +9,7 @@ from flask_jwt import jwt_required, current_identity
 
 from flask_app import app, rest_api
 from flask_app.retriever import get_expense, get_expenses
-from flask_app.controller import insert_expense
+from flask_app.controller import insert_expense, delete_expense
 
 logger = logging.getLogger(__name__)
 

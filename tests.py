@@ -392,6 +392,8 @@ class ExpenseApiTest(ExpenseTest):
         pass
         # PUT - without authentication
 
+        # PUT - with authentication, but expense does not exist
+
         # PUT - with authentication, but wrong user
 
         # PUT - missing data
@@ -399,12 +401,37 @@ class ExpenseApiTest(ExpenseTest):
         # PUT - data included
 
     def test_expense_delete(self):
-        pass
         # DELETE - without authentication
+        response = self.client.delete(self.get_expense_url(1))
+        self.assert_401(response)
+        self.assertIsNotNone(response.data)
+
+        user_1, headers_1 = self.create_jwt_test_user(name='test_user_1')
+        user_2, headers_2 = self.create_jwt_test_user(name='test_user_2')
 
         # DELETE - with authentication, but wrong user
+        expense = self.insert_test_expense(user=user_1)
+        expense_url = self.get_expense_url(expense.id)
 
-        # DELETE - with authentication and right user
+        response = self.client.delete(expense_url, headers=headers_2)
+        self.assert_401(response)
+
+        # DELETE - with authentication, but expense does not exist
+        expense = self.insert_test_expense(user=user_1)
+        expense_url = self.get_expense_url(expense.id)
+
+        db.session.delete(expense)
+        db.session.commit()
+
+        response = self.client.delete(expense_url, headers=headers_1)
+        self.assert_401(response)
+
+        # DELETE - successful request
+        expense = self.insert_test_expense(user=user_1)
+        expense_url = self.get_expense_url(expense.id)
+
+        response = self.client.delete(expense_url, headers=headers_1)
+        self.assert_200(response)
 
 
 if __name__ == '__main__':
