@@ -14,7 +14,6 @@ from flask_app.controller import insert_expense, update_expense, delete_expense
 logger = logging.getLogger(__name__)
 
 
-
 class InvalidRequest(Exception):
     status_code = 400
 
@@ -151,3 +150,13 @@ class ExpenseItem(AuthenticatedResource):
         return {'success': True}
 
 rest_api.add_resource(ExpenseItem, '/api/expense/<int:expense_id>')
+
+
+class Report(AuthenticatedResource):
+    def get(self):
+        user = current_identity
+
+        logger.debug('Getting report for user with id = {}'.format(user.id))
+        report = get_report(user_id=user.id)
+
+        return {'report': report}

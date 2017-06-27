@@ -1,6 +1,8 @@
 import unittest
 import os
 
+from nose import tools
+
 import bcrypt
 
 import pendulum
@@ -19,7 +21,7 @@ from flask_app.auth import (hash_password, create_user, authenticate_user,
         get_user, user_identity)
 
 from flask_app.controller import insert_expense, update_expense, delete_expense
-from flask_app.retriever import get_expense, get_expenses
+from flask_app.retriever import get_expense, get_expenses, get_report
 
 
 class FlaskTest(TestCase):
@@ -38,6 +40,7 @@ class FlaskTest(TestCase):
 
 
 class DbTestUtils(FlaskTest):
+    @tools.nottest
     def create_test_user(self, name='test_user', password='XDjVGeLvmT'):
         return create_user(name, password)
 
@@ -98,12 +101,14 @@ class JwtTestUtils(DbTestUtils):
     TEST_NAME = 'test_user'
     TEST_PASSWORD = 'P21AJ5eQWC'
 
+    @tools.nottest
     def create_test_data(self, name=TEST_NAME):
         return {
             'username': name,
             'password': self.TEST_PASSWORD
             }
 
+    @tools.nottest
     def create_jwt_test_user(self, name=TEST_NAME):
         user = self.create_test_user(name, self.TEST_PASSWORD)
         data = self.create_test_data(name=name)
@@ -166,7 +171,8 @@ class JwtTest(JwtTestUtils):
         self.assertIsNotNone(response.data)
 
 
-class ExpenseTest(JwtTestUtils):
+class ExpenseTestUtils(JwtTestUtils):
+    @tools.nottest
     def insert_test_expense(self, user=None, timestamp=None,
             amount=47.5, description='Test expense'):
         if not user:
@@ -179,6 +185,8 @@ class ExpenseTest(JwtTestUtils):
                 amount=amount, description=description)
         return expense
 
+
+class ExpenseTest(ExpenseTestUtils):
     def test_insert_expense(self):
         # User ID does not exist
         user = self.create_test_user()
@@ -296,10 +304,11 @@ class ExpenseTest(JwtTestUtils):
         self.assertIsNone(expense_query.first())
 
 
-class ExpenseApiTest(ExpenseTest):
+class ExpenseApiTest(ExpenseTestUtils):
     with app.test_request_context():
         EXPENSE_LIST_URL = url_for('expense')
 
+    @tools.nottest
     def get_expense_url(self, expense_id):
         with app.test_request_context():
             return url_for('expenseitem', expense_id=expense_id)
@@ -476,6 +485,37 @@ class ExpenseApiTest(ExpenseTest):
         response = self.client.delete(expense_url, headers=headers_1)
         self.assert_200(response)
         self.assertSuccessIsTrue(response)
+
+
+class ReportTest(ExpenseTestUtils):
+    def test_get_report(self):
+        # Get report for user which does not exist
+        report = get_report(1)
+        report_expenses = report['expenses']
+        self.assertEqual(len(report_expenses), 0)
+
+        # Get report for user without expenses
+        user, headers = self.create_jwt_test_user(name='test_user_1')
+        report = get_report(user.id)
+        report_expenses = report['expenses']
+        self.assertEqual(len(report_expenses), 0)
+        
+        # Get report for user with expenses
+        num_expenses = 10
+        for x in range(num_expenses):
+            self.insert_test_expense(user=user)
+        report = get_report(user.id)
+        report_expenses = report['expenses']
+        self.assertEqual(len(report_expenses), num_expenses)
+
+    def test_get_filtered_report(self):
+        pass
+
+        # Get report for user after date
+
+        # Get report for user before date
+
+        # Get report for user 
 
 
 if __name__ == '__main__':
