@@ -1,7 +1,7 @@
 import logging
 from functools import wraps
 
-from utils import DatabaseRetrieveException, DatabaseDeleteException
+from utils import DatabaseRetrieveException, DatabaseUpdateException, DatabaseDeleteException
 
 from flask import jsonify, request
 from flask_restful import Resource
@@ -9,7 +9,7 @@ from flask_jwt import jwt_required, current_identity
 
 from flask_app import app, rest_api
 from flask_app.retriever import get_expense, get_expenses
-from flask_app.controller import insert_expense, delete_expense
+from flask_app.controller import insert_expense, update_expense, delete_expense
 
 logger = logging.getLogger(__name__)
 
@@ -120,15 +120,30 @@ class ExpenseItem(AuthenticatedResource):
 
         return {'expense': expense.to_dict()}
 
+    def put(self, expense_id):
+        user = current_identity
+        request_json = request.get_json()
+
+        parse_request_json(request_json)
+
+        timestamp = request_json.get('timestamp', None)
+        amount = request_json.get('amount', None)
+        description = request_json.get('description', None)
+
+        logger.debug('Updating expense with id = {}'.format(expense_id))
+        try:
+            expense = update_expense(expense_id, user_id=user.id)
+        except DatabaseUpdateException as e:
+            raise InvalidRequest(str(e), 401)
+
+        return {'success': True, 'expense': expense.to_dict()}
+
     def delete(self, expense_id):
         user = current_identity
 
-        logger.debug('Retrieving expense with id = {}'.format(expense_id))
+        logger.debug('Deleting expense with id = {}'.format(expense_id))
         try:
-            if user.is_admin:
-                expense = delete_expense(expense_id)
-            else:
-                expense = delete_expense(expense_id, user_id=user.id)
+            expense = delete_expense(expense_id, user_id=user.id)
         except DatabaseDeleteException as e:
             raise InvalidRequest(str(e), 401)
 

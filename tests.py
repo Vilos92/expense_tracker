@@ -372,7 +372,7 @@ class ExpenseApiTest(ExpenseTest):
         self.assert_422(response)
 
         # POST - data included
-        dt = pendulum.now().subtract(days=5)
+        dt = pendulum.now().subtract()
         timestamp = dt.to_iso8601_string()
         data = {
                 'timestamp': timestamp,
@@ -383,22 +383,66 @@ class ExpenseApiTest(ExpenseTest):
         response = self.client.post(self.EXPENSE_LIST_URL, content_type='application/json',
                 headers=headers, data=json.dumps(data))
         self.assert_200(response)
-        self.assertIsNotNone(response.json)
         self.assertSuccessIsTrue(response)
         expense_json = response.json['expense']
         self.assertEqual(expense_json['user_id'], user.id)
 
     def test_expense_put(self):
-        pass
+        dt = pendulum.now().subtract()
+        timestamp = dt.to_iso8601_string()
+
+        data = {
+                'timestamp': timestamp,
+                'amount': 15.0,
+                'description': 'Updated test description'
+                }
+
         # PUT - without authentication
+        response = self.client.put(self.get_expense_url(1))
+        self.assert_401(response)
+        self.assertIsNotNone(response.data)
 
-        # PUT - with authentication, but expense does not exist
-
-        # PUT - with authentication, but wrong user
+        user_1, headers_1 = self.create_jwt_test_user(name='test_user_1')
+        user_2, headers_2 = self.create_jwt_test_user(name='test_user_2')
 
         # PUT - missing data
+        expense = self.insert_test_expense(user=user_1)
+        expense_url = self.get_expense_url(expense.id)
 
-        # PUT - data included
+        response = self.client.put(expense_url, headers=headers_1)
+        self.assert_422(response)
+
+        # PUT - expense does not exist
+        expense = self.insert_test_expense(user=user_1)
+        expense_url = self.get_expense_url(expense.id)
+
+        db.session.delete(expense)
+        db.session.commit()
+
+        response = self.client.put(expense_url, headers=headers_1,
+                content_type='application/json', data=json.dumps(data))
+        self.assert_401(response)
+
+        # PUT - wrong user
+        expense = self.insert_test_expense(user=user_1)
+        expense_url = self.get_expense_url(expense.id)
+
+        response = self.client.put(expense_url, headers=headers_2,
+                content_type='application/json', data=json.dumps(data))
+        self.assert_401(response)
+
+        # PUT - good request
+        expense = self.insert_test_expense(user=user_1)
+        expense_url = self.get_expense_url(expense.id)
+
+        response = self.client.put(expense_url, headers=headers_1,
+                content_type='application/json', data=json.dumps(data))
+        self.assert_200(response)
+        self.assertSuccessIsTrue(response)
+
+        self.assertEqual(datetime_to_pendulum(expense.timestamp), dt)
+        self.assertEqual(expense.amount, data['amount'])
+        self.assertEqual(expense.description, data['timestamp'])
 
     def test_expense_delete(self):
         # DELETE - without authentication
@@ -432,6 +476,7 @@ class ExpenseApiTest(ExpenseTest):
 
         response = self.client.delete(expense_url, headers=headers_1)
         self.assert_200(response)
+        self.assertSuccessIsTrue(response)
 
 
 if __name__ == '__main__':

@@ -22,11 +22,11 @@ def insert_expense(user_id, timestamp, amount, description):
     return expense
 
 
-def update_expense(expense_id, timestamp=None, amount=None, description=None):
-    expense = Expense.query.filter_by(id = expense_id).first()
-    if not expense:
-        warning = 'expense with id = {} does not exist'.format(expense_id)
-        raise DatabaseUpdateException(warning)
+def update_expense(expense_id, user_id=None, timestamp=None, amount=None, description=None):
+    try:
+        expense = get_expense(expense_id, user_id)
+    except DatabaseRetrieveException as e:
+        raise DatabaseUpdateException(e)
 
     if timestamp:
         expense.timestamp = timestamp
