@@ -49,12 +49,7 @@ def parse_request_json(request_json, *parameters):
         raise InvalidRequest(error, 422)
 
     missing_parameters = []
-    print ('here')
-    print(parameters)
-    print(request_json)
     for parameter in parameters:
-        print(parameter)
-        print(type(parameter))
         if parameter not in request_json:
             missing_parameters.append(parameter)
 
@@ -100,8 +95,6 @@ class Expense(AuthenticatedResource):
     def post(self):
         user_id = current_identity.id
         request_json = request.get_json()
-
-        print (request_json.items())
 
         required_params = ['timestamp', 'amount', 'description']
         timestamp, amount, description = parse_request_json(request_json, *required_params)

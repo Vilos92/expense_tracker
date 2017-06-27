@@ -376,6 +376,22 @@ class ExpenseApiTest(ExpenseTest):
         expense_json = response.json['expense']
         self.assertEqual(expense_json['user_id'], user.id)
 
+    def test_expense_put(self):
+        # PUT - without authentication
+
+        # PUT - with authentication, but wrong user
+
+        # PUT - missing data
+
+        # PUT - data included
+
+    def test_expense_delete(self):
+        # DELETE - without authentication
+
+        # DELETE - with authentication, but wrong user
+
+        # DELETE - with authentication and right user
+
 
 if __name__ == '__main__':
     unittest.main()
