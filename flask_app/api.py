@@ -3,12 +3,13 @@ from functools import wraps
 
 from utils import DatabaseRetrieveException
 
-from flask import jsonify
+from flask import jsonify, request
 from flask_restful import Resource
 from flask_jwt import jwt_required, current_identity
 
 from flask_app import app, rest_api
 from flask_app.retriever import get_expense, get_expenses
+from flask_app.controller import insert_expense
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +43,31 @@ def handle_invalid_request(error):
     return response
 
 
+def parse_request_json(request_json, *parameters):
+    if not request_json:
+        error = 'Missing POST JSON'
+        raise InvalidRequest(error, 422)
+
+    missing_parameters = []
+    print ('here')
+    print(parameters)
+    print(request_json)
+    for parameter in parameters:
+        print(parameter)
+        print(type(parameter))
+        if parameter not in request_json:
+            missing_parameters.append(parameter)
+
+    if missing_parameters:
+        error = 'Missing POST parameter(s): {}'.format(', '.join(missing_parameters))
+        raise InvalidRequest(error, 422)
+
+    if len(parameters) == 1:
+        return request_json[parameters[0]]
+    else:
+        return (request_json[parameter] for parameter in parameters)
+
+
 def admin_required(func):
     @wraps(func)
     @jwt_required()
@@ -61,7 +87,7 @@ class AdminResource(Resource):
     method_decorators = [admin_required]
 
 
-class ExpenseList(AuthenticatedResource):
+class Expense(AuthenticatedResource):
     def get(self):
         user_id = current_identity.id
 
@@ -71,8 +97,20 @@ class ExpenseList(AuthenticatedResource):
         expense_dicts = [expense.to_dict() for expense in expenses]
         return {'expenses': expense_dicts}
 
+    def post(self):
+        user_id = current_identity.id
+        request_json = request.get_json()
 
-class Expense(AuthenticatedResource):
+        print (request_json.items())
+
+        required_params = ['timestamp', 'amount', 'description']
+        timestamp, amount, description = parse_request_json(request_json, *required_params)
+
+        expense = insert_expense(user_id, timestamp, amount, description)
+        return {'success': True, 'expense': expense.to_dict()}
+
+
+class ExpenseItem(AuthenticatedResource):
     def get(self, expense_id):
         user = current_identity
 
@@ -87,6 +125,9 @@ class Expense(AuthenticatedResource):
 
         return {'expense': expense.to_dict()}
 
+    def delete(self, expense_id):
+        pass
 
-rest_api.add_resource(ExpenseList, '/api/expense')
-rest_api.add_resource(Expense, '/api/expense/<int:expense_id>')
+
+rest_api.add_resource(Expense, '/api/expense')
+rest_api.add_resource(ExpenseItem, '/api/expense/<int:expense_id>')

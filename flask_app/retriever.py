@@ -4,7 +4,6 @@ from utils import DatabaseRetrieveException
 
 from flask_app import db
 from flask_app.models import Expense
-from flask_app.auth import get_user, user_exists
 
 logger = logging.getLogger(__name__)
 
@@ -30,10 +29,6 @@ def get_expense(expense_id, user_id=None):
 
 
 def get_expenses(user_id):
-    if not user_exists(user_id):
-        warning = 'user with id = {} does not exist'.format(user_id)
-        raise DatabaseRetrieveException(warning)
-
     return Expense.query.filter_by(user_id = user_id).all()
 
 

@@ -28,6 +28,11 @@ class FlaskTest(TestCase):
         self.assertEqual(config_type, ConfigTypes.TESTING)
         return app
 
+    def assert_422(self, response):                                                                      
+        ''' check for message'''
+        self.assertEqual(response.status_code, 422)
+        self.assertIn('message', response.json)
+
 
 class DbTestUtils(FlaskTest):
     def create_test_user(self, name='test_user', password='XDjVGeLvmT'):
@@ -225,8 +230,8 @@ class ExpenseTest(JwtTestUtils):
 
     def test_get_expenses(self):
         # User ID does not exist
-        with self.assertRaises(DatabaseRetrieveException):
-            get_expenses(1)
+        expenses = get_expenses(1)
+        self.assertEqual(len(expenses), 0)
 
         # User ID does exist - no expenses
         user = self.create_test_user()
@@ -282,11 +287,11 @@ class ExpenseTest(JwtTestUtils):
 
 class ExpenseApiTest(ExpenseTest):
     with app.test_request_context():
-        EXPENSE_LIST_URL = url_for('expenselist')
+        EXPENSE_LIST_URL = url_for('expense')
 
     def get_expense_url(self, expense_id):
         with app.test_request_context():
-            return url_for('expense', expense_id=expense_id)
+            return url_for('expenseitem', expense_id=expense_id)
 
     def test_expenses_get(self):
         # GET - without authentication
@@ -310,10 +315,9 @@ class ExpenseApiTest(ExpenseTest):
             expense = self.insert_test_expense(user=user)
             expense_ids.append(expense.id)
         response = self.client.get(self.EXPENSE_LIST_URL, headers=headers)
-        response_json = response.json
-        self.assertIsNotNone(response_json)
+        self.assertIsNotNone(response.json)
 
-        response_expenses = response_json['expenses']
+        response_expenses = response.json['expenses']
         self.assertEqual(len(response_expenses), num_expenses)
 
     def test_expense_get(self):
@@ -344,6 +348,33 @@ class ExpenseApiTest(ExpenseTest):
         response = self.client.get(expense_url, headers=headers_2)
         self.assert_200(response)
         self.assertIsNotNone(response.json)
+
+    def test_expense_post(self):
+        # POST - without authentication
+        response = self.client.post(self.EXPENSE_LIST_URL, content_type='application/json')
+        self.assert_401(response)
+
+        # POST - missing data
+        user, headers = self.create_jwt_test_user()
+        response = self.client.post(self.EXPENSE_LIST_URL, content_type='application/json',
+                headers=headers, data=json.dumps({}))
+        self.assert_422(response)
+
+        # POST - data included
+        dt = pendulum.now().subtract(days=5)
+        timestamp = dt.to_iso8601_string()
+        data = {
+                'timestamp': timestamp,
+                'amount': 10.5,
+                'description': 'Test description'
+                }
+
+        response = self.client.post(self.EXPENSE_LIST_URL, content_type='application/json',
+                headers=headers, data=json.dumps(data))
+        self.assert_200(response)
+        self.assertIsNotNone(response.json)
+        expense_json = response.json['expense']
+        self.assertEqual(expense_json['user_id'], user.id)
 
 
 if __name__ == '__main__':
