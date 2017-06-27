@@ -549,9 +549,30 @@ class ReportTest(ExpenseTestUtils):
         self.assertEqual(len(report_expenses), num_expenses)
 
     def test_get_report_filter_between(self):
+        user, headers = self.create_jwt_test_user()
+
+        now = pendulum.now()
+        start_dt = now.subtract(days=1)
+        end_dt = now.add(days=1)
+
         # Get report for user between dates - none
+        before_start_dt = start_dt.subtract(days=1)
+        after_end_dt = end_dt.add(days=1)
+
+        self.insert_test_expense(user=user, timestamp=before_start_dt)
+        self.insert_test_expense(user=user, timestamp=after_end_dt)
+
+        report = get_report(user.id, start_timestamp=start_dt, end_timestamp=end_dt)
+        report_expenses = report['expenses']
+        self.assertEqual(len(report_expenses), 0)
+
         # Get report for user between dates - several
-        pass
+        num_expenses = 10
+        for x in range(num_expenses):
+            self.insert_test_expense(user=user, timestamp=now)
+        report = get_report(user.id, start_timestamp=start_dt, end_timestamp=end_dt)
+        report_expenses = report['expenses']
+        self.assertEqual(len(report_expenses), num_expenses)
 
 
 if __name__ == '__main__':
