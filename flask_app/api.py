@@ -127,12 +127,13 @@ class ExpenseItem(AuthenticatedResource):
         parse_request_json(request_json)
 
         timestamp = request_json.get('timestamp', None)
-        amount = request_json.get('amount', None)
+        amount = float(request_json.get('amount', None))
         description = request_json.get('description', None)
 
         logger.debug('Updating expense with id = {}'.format(expense_id))
         try:
-            expense = update_expense(expense_id, user_id=user.id)
+            expense = update_expense(expense_id, user_id=user.id, timestamp=timestamp,
+                    amount=amount, description=description)
         except DatabaseUpdateException as e:
             raise InvalidRequest(str(e), 401)
 

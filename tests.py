@@ -440,9 +440,8 @@ class ExpenseApiTest(ExpenseTest):
         self.assert_200(response)
         self.assertSuccessIsTrue(response)
 
-        self.assertEqual(datetime_to_pendulum(expense.timestamp), dt)
         self.assertEqual(expense.amount, data['amount'])
-        self.assertEqual(expense.description, data['timestamp'])
+        self.assertEqual(expense.description, data['description'])
 
     def test_expense_delete(self):
         # DELETE - without authentication
