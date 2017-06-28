@@ -8,7 +8,6 @@ import bcrypt
 import pendulum
 
 from flask import json, url_for
-from flask_jwt import jwt_required, current_identity
 from flask_testing import TestCase
 
 from config import ConfigTypes
@@ -17,8 +16,7 @@ from utils import (datetime_to_pendulum, DatabaseRetrieveException,
 
 from flask_app import app, db
 from flask_app.models import User, Expense
-from flask_app.auth import (hash_password, create_user, authenticate_user,
-        get_user, user_identity)
+from flask_app.auth import (hash_password, create_user, authenticate_user, get_user)
 
 from flask_app.controller import insert_expense, update_expense, delete_expense
 from flask_app.retriever import get_expense, get_expenses, get_report
@@ -93,10 +91,8 @@ class AuthTest(DbTestUtils):
 
 
 class JwtTestUtils(DbTestUtils):
-    AUTH_REQUEST_HANDLER_STR = '_default_auth_request_handler'
-
     with app.test_request_context():
-        AUTH_URL = url_for(AUTH_REQUEST_HANDLER_STR)
+        LOGIN_URL = url_for('login')
 
     TEST_NAME = 'test_user'
     TEST_PASSWORD = 'P21AJ5eQWC'
@@ -113,11 +109,11 @@ class JwtTestUtils(DbTestUtils):
         user = self.create_test_user(name, self.TEST_PASSWORD)
         data = self.create_test_data(name=name)
 
-        response = self.client.post(self.AUTH_URL, content_type='application/json',
+        response = self.client.post(self.LOGIN_URL, content_type='application/json',
                 data=json.dumps(data))
         access_token = response.json['access_token']
 
-        jwt_token = 'JWT {}'.format(access_token)
+        jwt_token = 'Bearer {}'.format(access_token)
         headers = {'Authorization': jwt_token}
 
         return user, headers
@@ -127,13 +123,13 @@ class JwtTest(JwtTestUtils):
     def test_get_auth(self):
         test_data = self.create_test_data()
 
-        response = self.client.post(self.AUTH_URL, content_type='application/json',
+        response = self.client.post(self.LOGIN_URL, content_type='application/json',
                 data=json.dumps(test_data))
         self.assert_401(response)
         self.assertIsNotNone(response.data)
 
         self.create_test_user(self.TEST_NAME, self.TEST_PASSWORD)
-        response = self.client.post(self.AUTH_URL, content_type='application/json',
+        response = self.client.post(self.LOGIN_URL, content_type='application/json',
                 data=json.dumps(test_data))
         self.assertIsNotNone(response.data)
         self.assertIsNotNone(response.json)

@@ -20,7 +20,6 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     SECRET_KEY = 'dev-K*"IK,t(g(Zv6b.XPCsg:dH[4^O"qJ'
-    JWT_SECRET_KEY = 'dev-M!WakM+/(R>Q~=EHogFD+PZ[6-ef#j'
 
 
 class ProductionConfig(Config):
@@ -40,4 +39,3 @@ class TestingConfig(Config):
                                                             db='expense-tracker-test')
 
     SECRET_KEY = 'test-EQ>*Ye*hY7H}5`Qxs*ny&:3F3NmHf"'
-    JWT_SECRET_KEY = 'test-K2"P}nIIi5ee^olJNw/PGM5XUgxZ|J'

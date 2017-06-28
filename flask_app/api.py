@@ -5,9 +5,10 @@ from utils import DatabaseRetrieveException, DatabaseUpdateException, DatabaseDe
 
 from flask import jsonify, request
 from flask_restful import Resource
-from flask_jwt import jwt_required, current_identity
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
 from flask_app import app, rest_api
+from flask_app.auth import authenticate_user, get_user
 from flask_app.retriever import get_expense, get_expenses, get_report
 from flask_app.controller import insert_expense, update_expense, delete_expense
 
@@ -62,11 +63,18 @@ def parse_request_json(request_json, *parameters):
         return (request_json[parameter] for parameter in parameters)
 
 
+def current_user():
+    user_id = get_jwt_identity()
+    return get_user(user_id)
+
+
 def admin_required(func):
     @wraps(func)
-    @jwt_required()
+    @jwt_required
     def decorated_function(*args, **kwargs):
-        if current_identity.is_admin != True:
+        user = current_user()
+
+        if user.is_admin != True:
             error = 'Request does not have admin authorization'
             raise InvalidRequest(error, 401)
         return func(*args, **kwargs)
@@ -74,16 +82,34 @@ def admin_required(func):
 
 
 class AuthenticatedResource(Resource):
-    method_decorators = [jwt_required()]
+    method_decorators = [jwt_required]
 
 
 class AdminResource(Resource):
     method_decorators = [admin_required]
 
 
+class Login(Resource):
+    def post(self):
+        request_json = request.json
+
+        required_params = ['username', 'password']
+        username, password = parse_request_json(request_json, *required_params)
+
+        user = authenticate_user(username, password)
+
+        if not user:
+            error = 'Invalid username or password'
+            raise InvalidRequest(error, 401)
+        
+        return {'access_token': create_access_token(identity=user.id)}
+
+rest_api.add_resource(Login, '/api/login')
+
+
 class Expense(AuthenticatedResource):
     def get(self):
-        user_id = current_identity.id
+        user_id = current_user().id
 
         logger.debug('Retrieving expenses for user with id = {}'.format(user_id))
         expenses = get_expenses(user_id)
@@ -92,7 +118,7 @@ class Expense(AuthenticatedResource):
         return {'expenses': expense_dicts}
 
     def post(self):
-        user_id = current_identity.id
+        user_id = current_user().id
         request_json = request.get_json()
 
         required_params = ['timestamp', 'amount', 'description']
@@ -106,7 +132,7 @@ rest_api.add_resource(Expense, '/api/expense')
 
 class ExpenseItem(AuthenticatedResource):
     def get(self, expense_id):
-        user = current_identity
+        user = current_user()
 
         logger.debug('Retrieving expense with id = {}'.format(expense_id))
         try:
@@ -120,7 +146,7 @@ class ExpenseItem(AuthenticatedResource):
         return {'expense': expense.to_dict()}
 
     def put(self, expense_id):
-        user = current_identity
+        user = current_user()
         request_json = request.get_json()
 
         parse_request_json(request_json)
@@ -139,7 +165,7 @@ class ExpenseItem(AuthenticatedResource):
         return {'success': True, 'expense': expense.to_dict()}
 
     def delete(self, expense_id):
-        user = current_identity
+        user = current_user()
 
         logger.debug('Deleting expense with id = {}'.format(expense_id))
         try:
@@ -154,7 +180,7 @@ rest_api.add_resource(ExpenseItem, '/api/expense/<int:expense_id>')
 
 class Report(AuthenticatedResource):
     def get(self):
-        user = current_identity
+        user = current_user()
 
         logger.debug('Getting report for user with id = {}'.format(user.id))
         report = get_report(user_id=user.id)
