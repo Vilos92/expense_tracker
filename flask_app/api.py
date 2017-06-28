@@ -8,7 +8,7 @@ from flask_restful import Resource
 from flask_jwt import jwt_required, current_identity
 
 from flask_app import app, rest_api
-from flask_app.retriever import get_expense, get_expenses
+from flask_app.retriever import get_expense, get_expenses, get_report
 from flask_app.controller import insert_expense, update_expense, delete_expense
 
 logger = logging.getLogger(__name__)
@@ -160,3 +160,5 @@ class Report(AuthenticatedResource):
         report = get_report(user_id=user.id)
 
         return {'report': report}
+
+rest_api.add_resource(Report, '/api/report')

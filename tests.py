@@ -489,13 +489,14 @@ class ExpenseApiTest(ExpenseTestUtils):
 
 class ReportTest(ExpenseTestUtils):
     def test_get_report(self):
+        user, headers = self.create_jwt_test_user()
+
         # Get report for user which does not exist
         report = get_report(1)
         report_expenses = report['expenses']
         self.assertEqual(len(report_expenses), 0)
 
         # Get report for user without expenses
-        user, headers = self.create_jwt_test_user()
         report = get_report(user.id)
         report_expenses = report['expenses']
         self.assertEqual(len(report_expenses), 0)
@@ -573,6 +574,11 @@ class ReportTest(ExpenseTestUtils):
         report = get_report(user.id, start_timestamp=start_dt, end_timestamp=end_dt)
         report_expenses = report['expenses']
         self.assertEqual(len(report_expenses), num_expenses)
+
+
+class ReportApiTest(ExpenseTestUtils):
+    # Handle timestamps (start and end)
+    pass
 
 
 if __name__ == '__main__':

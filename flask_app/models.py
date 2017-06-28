@@ -9,12 +9,6 @@ class Base(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
 
-class UserRole(Base):
-    __tablename__ = 'user_role'
-
-    name = db.Column(db.String(80), unique=True, nullable=False)
-
-
 class User(Base):
     __tablename__ = 'user'
 

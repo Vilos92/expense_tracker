@@ -18,6 +18,9 @@ if config_type not in ConfigTypes:
 config_path = 'config.{}Config'.format(config_type)
 app.config.from_object(config_path)
 
+app_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+app.static_folder = os.path.join(app_directory, 'static')
+
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
