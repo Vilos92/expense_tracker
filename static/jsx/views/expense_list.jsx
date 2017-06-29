@@ -5,9 +5,15 @@ import { connect } from 'react-redux';
 class ExpenseListView extends React.Component {
     constructor(props) {
         super(props);
+
+        this.handleClickExpenses = this.handleClickExpenses.bind(this);
     }
 
     componentWillMount() {
+        this.props.expenses_request();
+    }
+
+    handleClickExpenses() {
         this.props.expenses_request();
     }
 
@@ -20,6 +26,9 @@ class ExpenseListView extends React.Component {
         return (
             <div>
                 Expenses: {JSON.stringify(this.props.expenses)}<br/>
+
+                <button onClick={this.handleClickExpenses}>Get Expenses</button>
+                <br/>
 
                 <input type="date" />
                 <input type="text" placeholder="amount" />

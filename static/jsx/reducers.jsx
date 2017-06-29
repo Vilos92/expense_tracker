@@ -1,20 +1,32 @@
 import { combineReducers } from 'redux';
 
 
+export const REFRESH_REQUEST = 'REFRESH_REQUEST';
+export const REFRESH_RECEIVE = 'REFRESH_RECEIVE';
+export const REFRESH_FAILED = 'REFRESH_FAILED';
+
 export const LOGIN_REQUEST = 'LOGIN_REQUEST';
 export const LOGIN_RECEIVE = 'LOGIN_RECEIVE';
 export const LOGIN_FAILED = 'LOGIN_FAILED';
 
 const default_auth_state = {
-    access_token: null
+    access_token: null,
+    refresh_token: null
 };
 
 export function auth(state=null, action) {
     switch(action.type) {
         case LOGIN_RECEIVE:
-            return {...state, access_token: action.access_token} 
+            return {
+                ...state, access_token: action.access_token, refresh_token: action.refresh_token
+            };
+        case REFRESH_RECEIVE:
+            return {
+                ...state, access_token: action.access_token
+            }
         case LOGIN_FAILED:
-            return {...state, access_token: null}
+        case REFRESH_FAILED:
+            return {...state, access_token: null, refresh_token: null};
         default:
             return state;
     }

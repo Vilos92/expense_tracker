@@ -12,7 +12,7 @@ export default class ReportView extends React.Component {
         fetch('/api/report', {
             method: 'GET',
             headers: {
-                Authorization: `JWT ${access_token}`,
+                Authorization: `Bearer ${access_token}`,
             },
         })
         .then(response => {

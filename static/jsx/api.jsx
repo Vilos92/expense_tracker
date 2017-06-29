@@ -1,8 +1,3 @@
-import moment from 'moment';
-
-import jwtDecode from 'jwt-decode';
-
-
 function handle_fetch_errors(response) {
     if (!response.ok) {
         throw Error(response.statusText);
@@ -12,8 +7,8 @@ function handle_fetch_errors(response) {
 }
 
 
-function get_auth_header(access_token) {
-    return {Authorization: `JWT ${access_token}`};
+function get_auth_header(token) {
+    return {Authorization: `Bearer ${token}`};
 }
 
 
@@ -23,7 +18,7 @@ function login_fetch(username, password) {
         password
     };
 
-    return fetch('/auth', {
+    return fetch('/auth/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -34,32 +29,29 @@ function login_fetch(username, password) {
     .then(response => response.json())
     .then(json => {
         const access_token = json.access_token;
+        const refresh_token = json.refresh_token;
 
-        const decoded = jwtDecode(access_token);
-        //console.log(decoded);
+        return [access_token, refresh_token]
+    }).
+    catch(error => {
+        console.log(error.message);
+    });
+}
 
-        const created = decoded.iat;
-        const expires = decoded.exp;
 
-        const created_moment = moment.unix(created);
-        const expires_moment = moment.unix(expires);
+function refresh_fetch(refresh_token) {
+    const headers = get_auth_header(refresh_token);
 
-        //console.log(created_moment.format("dddd, MMMM Do YYYY, h:mm:ss a"));
-        //console.log(expires_moment.format("dddd, MMMM Do YYYY, h:mm:ss a"));
+    return fetch('/auth/refresh', {
+        method: 'POST',
+        headers: headers
+    })
+    .then(handle_fetch_errors)
+    .then(response => response.json())
+    .then(json => {
+        const access_token = json.access_token;
 
         return access_token;
-
-        // For EVERY fetch which needs auth, check expiration of this token
-        // If token is expired, fetch new token
-        //
-        // Use redux-saga, so that only one token is fetched simultaneously with yield
-        // takeLatest to only evaluate most recent fetch for a token
-        // getState, access to current token in dispatch(refreshTokenIfNecessary)
-        //
-        // Separate endpoint takes existing, expired, token
-        // Validates if expired token belongs to a real user
-        // If token is real user, and is less than 14 days old, return new token
-        // Else, return 401 for refresh
     }).
     catch(error => {
         console.log(error.message);
@@ -91,7 +83,8 @@ function expenses_fetch(access_token) {
 
 const Api = {
     login_fetch,
-    expenses_fetch,
+    refresh_fetch,
+    expenses_fetch
 }
 
 export default Api;

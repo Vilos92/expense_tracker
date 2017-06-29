@@ -14,7 +14,7 @@ class AuthContainer extends React.Component {
     }
 
     render() {
-        if (!this.props.auth || !this.props.auth.access_token) {
+        if (!this.props.auth || !this.props.auth.refresh_token || !this.props.auth.access_token) {
             return (
                 <div>
                     Must retrieve access token!
