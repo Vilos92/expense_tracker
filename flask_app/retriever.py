@@ -42,5 +42,6 @@ def get_expenses(user_id, start_timestamp=None, end_timestamp=None):
 
 def get_report(user_id, start_timestamp=None, end_timestamp=None):
     expenses = get_expenses(user_id, start_timestamp, end_timestamp)
+    expense_dicts = [expense.to_dict() for expense in expenses]
 
-    return {'expenses': expenses}
+    return {'expenses': expense_dicts}

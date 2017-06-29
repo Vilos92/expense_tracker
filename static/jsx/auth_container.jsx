@@ -30,6 +30,7 @@ class AuthContainer extends React.Component {
 
         return (
             <div>
+                <button onClick={this.props.logout}>Logout</button>
                 {auth_children}
             </div>
         );
@@ -51,8 +52,15 @@ const mapDispatchToProps = (dispatch) => {
         });
     };
 
+    const logout = () => {
+        dispatch({
+            type: 'LOGOUT_REQUEST'
+        });
+    };
+
     return {
         login_fetch,
+        logout,
     }; 
 };
 

@@ -7,8 +7,10 @@ import { delay } from 'redux-saga'
 import { select, call, put, takeLatest, all } from 'redux-saga/effects'
 
 import { REFRESH_REQUEST, REFRESH_RECEIVE, REFRESH_FAILED,
-    LOGIN_REQUEST, LOGIN_RECEIVE, LOGIN_FAILED } from './reducers.jsx';
-import { EXPENSES_REQUEST, EXPENSES_RECEIVE, EXPENSES_FAILED } from './reducers.jsx';
+    LOGIN_REQUEST, LOGIN_RECEIVE, LOGIN_FAILED,
+    LOGOUT_REQUEST, LOGOUT } from './reducers.jsx';
+import { EXPENSES_REQUEST, EXPENSES_RECEIVE,
+    EXPENSES_FAILED, EXPENSE_SUBMIT } from './reducers.jsx';
 import Api from './api.jsx';
 
 
@@ -72,6 +74,18 @@ export function* get_access_token() {
 }
 
 
+// Auth - Logout - Can probably just make plain action for this
+function* logout(action) {
+    yield put({type: LOGOUT});
+}
+
+
+// Yeah, plain action
+export function* watch_logout_request() {
+    yield takeLatest(LOGOUT_REQUEST, logout)
+}
+
+
 // Expenses
 function* expenses_fetch(action) {
     const access_token = yield get_access_token();
@@ -90,9 +104,35 @@ export function* watch_expenses_request() {
 }
 
 
+// Expense Submit
+function* expense_submit(action) {
+    const access_token = yield get_access_token();
+    
+    const timestamp = action.timestamp;
+    const amount = action.amount;
+    const description = action.description;
+
+	try {
+		const expenses = yield call(Api.expense_submit, access_token,
+                timestamp, amount, description);
+		//yield put({type: EXPENSES_RECEIVE, expenses});
+	} catch (e) {
+		//yield put({type: EXPENSES_FAILED, message: e.message});
+	}
+}
+
+
+export function* watch_expense_submit() {
+    yield takeLatest(EXPENSE_SUBMIT, expense_submit)
+}
+
+
+
 export default function* root_saga() {
     yield all([
         watch_login_request(),
-        watch_expenses_request()
+        watch_logout_request(),
+        watch_expenses_request(),
+        watch_expense_submit()
     ])
 }

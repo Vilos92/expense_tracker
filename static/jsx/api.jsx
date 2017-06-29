@@ -81,10 +81,41 @@ function expenses_fetch(access_token) {
 }
 
 
+function expense_submit(access_token, timestamp, amount, description) {
+    const token_headers = get_auth_header(access_token);
+
+    const headers = {
+        ...token_headers,
+        'Content-Type': 'application/json'
+    };
+
+    const body = {
+        timestamp,
+        amount,
+        description
+    };
+
+    return fetch('/api/expense', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(body)
+    })
+    .then(handle_fetch_errors)
+    .then(response => response.json())
+    .then(json => {
+        console.log(json);
+    }).
+    catch(error => {
+        console.log(error.message);
+    });
+}
+
+
 const Api = {
     login_fetch,
     refresh_fetch,
-    expenses_fetch
+    expenses_fetch,
+    expense_submit
 }
 
 export default Api;

@@ -9,6 +9,9 @@ export const LOGIN_REQUEST = 'LOGIN_REQUEST';
 export const LOGIN_RECEIVE = 'LOGIN_RECEIVE';
 export const LOGIN_FAILED = 'LOGIN_FAILED';
 
+export const LOGOUT_REQUEST = 'LOGOUT_REQUEST';
+export const LOGOUT = 'LOGOUT';
+
 const default_auth_state = {
     access_token: null,
     refresh_token: null
@@ -26,6 +29,7 @@ export function auth(state=null, action) {
             }
         case LOGIN_FAILED:
         case REFRESH_FAILED:
+        case LOGOUT:
             return {...state, access_token: null, refresh_token: null};
         default:
             return state;
@@ -36,6 +40,7 @@ export function auth(state=null, action) {
 export const EXPENSES_REQUEST = 'EXPENSES_REQUEST';
 export const EXPENSES_RECEIVE = 'EXPENSES_RECEIVE';
 export const EXPENSES_FAILED = 'EXPENSES_FAILED';
+export const EXPENSE_SUBMIT = 'EXPENSE_SUBMIT';
 
 const expenses_default_state = {
     data: [],
