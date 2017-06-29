@@ -124,7 +124,7 @@ class JwtTestUtils(DbTestUtils):
 
 
 class JwtTest(JwtTestUtils):
-    def test_get_auth(self):
+    def test_login(self):
         test_data = self.create_test_data()
 
         response = self.client.post(self.LOGIN_URL, content_type='application/json',
@@ -172,14 +172,27 @@ class JwtTest(JwtTestUtils):
         self.assertIsNotNone(response.data)
 
     def test_refresh_token(self):
+        self.create_test_user(self.TEST_NAME, self.TEST_PASSWORD)
+
+        test_data = self.create_test_data()
+
+        response = self.client.post(self.LOGIN_URL, content_type='application/json',
+                data=json.dumps(test_data))
+        self.assertIsNotNone(response.json)
+        access_token = response.json['access_token']
+
+        refresh_token = response.json['refresh_token']
+        auth_value = 'Bearer {}'.format(refresh_token)
+        refresh_headers = {'Authorization': auth_value}
+
         refresh_url = url_for('refresh')
-
-        user, headers, refresh_headers = self.create_jwt_test_user()
-
         response = self.client.post(refresh_url, content_type='application/json',
                 headers=refresh_headers)
         self.assert_200(response)
         self.assertIn('access_token', response.json)
+
+        new_access_token = response.json['access_token']
+        self.assertNotEqual(access_token, new_access_token)
 
 
 class ExpenseTestUtils(JwtTestUtils):

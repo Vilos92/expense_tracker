@@ -65,7 +65,6 @@ export function* get_access_token() {
         yield call(refresh_fetch);
 
         auth = yield select(get_auth);
-        console.log(access_token === auth.access_token);
         access_token = auth.access_token;
     }
 

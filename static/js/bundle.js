@@ -50776,7 +50776,7 @@ function get_access_token() {
           time_until_exp = expires_moment.diff((0, _moment2.default)(), 'seconds');
 
           if (!(time_until_exp <= 60)) {
-            _context4.next = 16;
+            _context4.next = 15;
             break;
           }
 
@@ -50790,13 +50790,12 @@ function get_access_token() {
         case 13:
           auth = _context4.sent;
 
-          console.log(access_token === auth.access_token);
           access_token = auth.access_token;
 
-        case 16:
+        case 15:
           return _context4.abrupt('return', access_token);
 
-        case 17:
+        case 16:
         case 'end':
           return _context4.stop();
       }
