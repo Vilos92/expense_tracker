@@ -64,9 +64,19 @@ class ExpenseListView extends React.Component {
     }
 
     render() {
+        let expense_items = null;
+        if (this.props.expenses) {
+            console.log(this.props.expenses);
+            expense_items = this.props.expenses.data.map(expense => {
+                return <li key={expense.id}>{expense.id}</li>;
+            });
+        }
+
         return (
             <div>
-                Expenses: {JSON.stringify(this.props.expenses)}<br/>
+                <ul>
+                    {expense_items}
+                </ul>
 
                 <button onClick={this.handleClickExpenses}>Get Expenses</button>
                 <br/>

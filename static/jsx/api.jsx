@@ -69,9 +69,7 @@ function expenses_fetch(access_token) {
     .then(handle_fetch_errors)
     .then(response => response.json())
     .then(json => {
-        console.log(json);
         const expenses = json.expenses;
-        console.log(expenses);
 
         return expenses;
     }).

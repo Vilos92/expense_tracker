@@ -52,6 +52,7 @@ class Expense(Base):
         timestamp = dt.to_iso8601_string()
 
         return {
+                'id': self.id,
                 'user_id': self.user_id,
                 'timestamp': timestamp,
                 'amount': self.amount,

@@ -50920,19 +50920,23 @@ function expense_submit(action) {
 
                 case 9:
                     expenses = _context9.sent;
-                    _context9.next = 14;
-                    break;
+                    _context9.next = 12;
+                    return (0, _effects.put)({ type: _reducers.EXPENSES_REQUEST });
 
                 case 12:
-                    _context9.prev = 12;
-                    _context9.t0 = _context9['catch'](6);
+                    _context9.next = 16;
+                    break;
 
                 case 14:
+                    _context9.prev = 14;
+                    _context9.t0 = _context9['catch'](6);
+
+                case 16:
                 case 'end':
                     return _context9.stop();
             }
         }
-    }, _marked[8], this, [[6, 12]]);
+    }, _marked[8], this, [[6, 14]]);
 }
 
 function watch_expense_submit() {
@@ -51410,9 +51414,7 @@ function expenses_fetch(access_token) {
     }).then(handle_fetch_errors).then(function (response) {
         return response.json();
     }).then(function (json) {
-        console.log(json);
         var expenses = json.expenses;
-        console.log(expenses);
 
         return expenses;
     }).catch(function (error) {
@@ -51673,12 +51675,26 @@ var ExpenseListView = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
+            var expense_items = null;
+            if (this.props.expenses) {
+                console.log(this.props.expenses);
+                expense_items = this.props.expenses.data.map(function (expense) {
+                    return _react2.default.createElement(
+                        'li',
+                        { key: expense.id },
+                        expense.id
+                    );
+                });
+            }
+
             return _react2.default.createElement(
                 'div',
                 null,
-                'Expenses: ',
-                JSON.stringify(this.props.expenses),
-                _react2.default.createElement('br', null),
+                _react2.default.createElement(
+                    'ul',
+                    null,
+                    expense_items
+                ),
                 _react2.default.createElement(
                     'button',
                     { onClick: this.handleClickExpenses },

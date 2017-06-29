@@ -115,6 +115,8 @@ function* expense_submit(action) {
 	try {
 		const expenses = yield call(Api.expense_submit, access_token,
                 timestamp, amount, description);
+
+        yield put({type: EXPENSES_REQUEST}); // Don't do this, use return value
 		//yield put({type: EXPENSES_RECEIVE, expenses});
 	} catch (e) {
 		//yield put({type: EXPENSES_FAILED, message: e.message});
