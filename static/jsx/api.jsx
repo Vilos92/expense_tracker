@@ -109,11 +109,30 @@ function expense_submit(access_token, timestamp, amount, description) {
 }
 
 
+function expense_delete(access_token, expense_id) {
+    const headers = get_auth_header(access_token);
+
+    return fetch(`/api/expense/${expense_id}`, {
+        method: 'DELETE',
+        headers
+    })
+    .then(handle_fetch_errors)
+    .then(response => response.json())
+    .then(json => {
+        console.log(json);
+    }).
+    catch(error => {
+        console.log(error.message);
+    });
+}
+
+
 const Api = {
     login_fetch,
     refresh_fetch,
     expenses_fetch,
-    expense_submit
+    expense_submit,
+    expense_delete
 }
 
 export default Api;

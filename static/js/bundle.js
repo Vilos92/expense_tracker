@@ -67,54 +67,6 @@
 /* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global    = __webpack_require__(6)
-  , core      = __webpack_require__(38)
-  , hide      = __webpack_require__(19)
-  , redefine  = __webpack_require__(20)
-  , ctx       = __webpack_require__(39)
-  , PROTOTYPE = 'prototype';
-
-var $export = function(type, name, source){
-  var IS_FORCED = type & $export.F
-    , IS_GLOBAL = type & $export.G
-    , IS_STATIC = type & $export.S
-    , IS_PROTO  = type & $export.P
-    , IS_BIND   = type & $export.B
-    , target    = IS_GLOBAL ? global : IS_STATIC ? global[name] || (global[name] = {}) : (global[name] || {})[PROTOTYPE]
-    , exports   = IS_GLOBAL ? core : core[name] || (core[name] = {})
-    , expProto  = exports[PROTOTYPE] || (exports[PROTOTYPE] = {})
-    , key, own, out, exp;
-  if(IS_GLOBAL)source = name;
-  for(key in source){
-    // contains in native
-    own = !IS_FORCED && target && target[key] !== undefined;
-    // export native or passed
-    out = (own ? target : source)[key];
-    // bind timers to global for call from export context
-    exp = IS_BIND && own ? ctx(out, global) : IS_PROTO && typeof out == 'function' ? ctx(Function.call, out) : out;
-    // extend global
-    if(target)redefine(target, key, out, type & $export.U);
-    // export
-    if(exports[key] != out)hide(exports, key, exp);
-    if(IS_PROTO && expProto[key] != out)expProto[key] = out;
-  }
-};
-global.core = core;
-// type bitmap
-$export.F = 1;   // forced
-$export.G = 2;   // global
-$export.S = 4;   // static
-$export.P = 8;   // proto
-$export.B = 16;  // bind
-$export.W = 32;  // wrap
-$export.U = 64;  // safe
-$export.R = 128; // real proto method for `library` 
-module.exports = $export;
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
 /* WEBPACK VAR INJECTION */(function(module) {//! moment.js
 //! version : 2.18.1
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -4582,6 +4534,54 @@ return hooks;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(207)(module)))
 
 /***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var global    = __webpack_require__(6)
+  , core      = __webpack_require__(38)
+  , hide      = __webpack_require__(19)
+  , redefine  = __webpack_require__(20)
+  , ctx       = __webpack_require__(39)
+  , PROTOTYPE = 'prototype';
+
+var $export = function(type, name, source){
+  var IS_FORCED = type & $export.F
+    , IS_GLOBAL = type & $export.G
+    , IS_STATIC = type & $export.S
+    , IS_PROTO  = type & $export.P
+    , IS_BIND   = type & $export.B
+    , target    = IS_GLOBAL ? global : IS_STATIC ? global[name] || (global[name] = {}) : (global[name] || {})[PROTOTYPE]
+    , exports   = IS_GLOBAL ? core : core[name] || (core[name] = {})
+    , expProto  = exports[PROTOTYPE] || (exports[PROTOTYPE] = {})
+    , key, own, out, exp;
+  if(IS_GLOBAL)source = name;
+  for(key in source){
+    // contains in native
+    own = !IS_FORCED && target && target[key] !== undefined;
+    // export native or passed
+    out = (own ? target : source)[key];
+    // bind timers to global for call from export context
+    exp = IS_BIND && own ? ctx(out, global) : IS_PROTO && typeof out == 'function' ? ctx(Function.call, out) : out;
+    // extend global
+    if(target)redefine(target, key, out, type & $export.U);
+    // export
+    if(exports[key] != out)hide(exports, key, exp);
+    if(IS_PROTO && expProto[key] != out)expProto[key] = out;
+  }
+};
+global.core = core;
+// type bitmap
+$export.F = 1;   // forced
+$export.G = 2;   // global
+$export.S = 4;   // static
+$export.P = 8;   // proto
+$export.B = 16;  // bind
+$export.W = 32;  // wrap
+$export.U = 64;  // safe
+$export.R = 128; // real proto method for `library` 
+module.exports = $export;
+
+/***/ }),
 /* 2 */
 /***/ (function(module, exports) {
 
@@ -5478,7 +5478,7 @@ module.exports = function(it){
 /* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var $export = __webpack_require__(0)
+var $export = __webpack_require__(1)
   , fails   = __webpack_require__(7)
   , defined = __webpack_require__(31)
   , quot    = /"/g;
@@ -6371,7 +6371,7 @@ module.exports = function(it, S){
 /***/ (function(module, exports, __webpack_require__) {
 
 // most Object methods by ES6 should accept primitives
-var $export = __webpack_require__(0)
+var $export = __webpack_require__(1)
   , core    = __webpack_require__(38)
   , fails   = __webpack_require__(7);
 module.exports = function(KEY, exec){
@@ -6763,7 +6763,7 @@ if(__webpack_require__(12)){
   var LIBRARY             = __webpack_require__(48)
     , global              = __webpack_require__(6)
     , fails               = __webpack_require__(7)
-    , $export             = __webpack_require__(0)
+    , $export             = __webpack_require__(1)
     , $typed              = __webpack_require__(87)
     , $buffer             = __webpack_require__(123)
     , ctx                 = __webpack_require__(39)
@@ -7243,7 +7243,7 @@ if(__webpack_require__(12)){
 /***/ (function(module, exports, __webpack_require__) {
 
 var Map     = __webpack_require__(164)
-  , $export = __webpack_require__(0)
+  , $export = __webpack_require__(1)
   , shared  = __webpack_require__(78)('metadata')
   , store   = shared.store || (shared.store = new (__webpack_require__(167)));
 
@@ -8482,7 +8482,7 @@ module.exports = function(it, tag, stat){
 /* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var $export = __webpack_require__(0)
+var $export = __webpack_require__(1)
   , defined = __webpack_require__(31)
   , fails   = __webpack_require__(7)
   , spaces  = __webpack_require__(105)
@@ -10332,7 +10332,7 @@ module.exports = function(KEY, length, exec){
 "use strict";
 
 var global            = __webpack_require__(6)
-  , $export           = __webpack_require__(0)
+  , $export           = __webpack_require__(1)
   , redefine          = __webpack_require__(20)
   , redefineAll       = __webpack_require__(55)
   , meta              = __webpack_require__(44)
@@ -11939,7 +11939,7 @@ module.exports = function(TO_STRING){
 "use strict";
 
 var LIBRARY        = __webpack_require__(48)
-  , $export        = __webpack_require__(0)
+  , $export        = __webpack_require__(1)
   , redefine       = __webpack_require__(20)
   , hide           = __webpack_require__(19)
   , has            = __webpack_require__(18)
@@ -21632,7 +21632,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.EXPENSE_SUBMIT = exports.EXPENSES_FAILED = exports.EXPENSES_RECEIVE = exports.EXPENSES_REQUEST = exports.LOGOUT = exports.LOGOUT_REQUEST = exports.LOGIN_FAILED = exports.LOGIN_RECEIVE = exports.LOGIN_REQUEST = exports.REFRESH_FAILED = exports.REFRESH_RECEIVE = exports.REFRESH_REQUEST = undefined;
+exports.EXPENSE_DELETE = exports.EXPENSE_SUBMIT = exports.EXPENSES_FAILED = exports.EXPENSES_RECEIVE = exports.EXPENSES_REQUEST = exports.LOGOUT = exports.LOGOUT_REQUEST = exports.LOGIN_FAILED = exports.LOGIN_RECEIVE = exports.LOGIN_REQUEST = exports.REFRESH_FAILED = exports.REFRESH_RECEIVE = exports.REFRESH_REQUEST = undefined;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
@@ -21681,6 +21681,7 @@ var EXPENSES_REQUEST = exports.EXPENSES_REQUEST = 'EXPENSES_REQUEST';
 var EXPENSES_RECEIVE = exports.EXPENSES_RECEIVE = 'EXPENSES_RECEIVE';
 var EXPENSES_FAILED = exports.EXPENSES_FAILED = 'EXPENSES_FAILED';
 var EXPENSE_SUBMIT = exports.EXPENSE_SUBMIT = 'EXPENSE_SUBMIT';
+var EXPENSE_DELETE = exports.EXPENSE_DELETE = 'EXPENSE_DELETE';
 
 var expenses_default_state = {
     data: []
@@ -21715,7 +21716,7 @@ exports.default = root_reducer;
 //! author : Werner Mollentze : https://github.com/wernerm
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -21795,7 +21796,7 @@ return af;
 //! author : forabi https://github.com/forabi
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -21940,7 +21941,7 @@ return ar;
 //! author : Noureddine LOUAHEDJ : https://github.com/noureddineme
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -22004,7 +22005,7 @@ return arDz;
 //! author : Nusret Parlak: https://github.com/nusretparlak
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -22068,7 +22069,7 @@ return arKw;
 //! author : Ali Hmer: https://github.com/kikoanis
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -22200,7 +22201,7 @@ return arLy;
 //! author : Abdel Said : https://github.com/abdelsaid
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -22264,7 +22265,7 @@ return arMa;
 //! author : Suhail Alkowaileet : https://github.com/xsoh
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -22374,7 +22375,7 @@ return arSa;
 //! author : Nader Toukabri : https://github.com/naderio
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -22438,7 +22439,7 @@ return arTn;
 //! author : topchiyev : https://github.com/topchiyev
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -22550,7 +22551,7 @@ return az;
 //! Author : Menelion Elensúle : https://github.com/Oire
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -22687,7 +22688,7 @@ return be;
 //! author : Krasen Borisov : https://github.com/kraz
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -22782,7 +22783,7 @@ return bg;
 //! author : Kaushik Gandhi : https://github.com/kaushikgandhi
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -22906,7 +22907,7 @@ return bn;
 //! author : Thupten N. Chakrishar : https://github.com/vajradog
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -23030,7 +23031,7 @@ return bo;
 //! author : Jean-Baptiste Le Duigou : https://github.com/jbleduigou
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -23144,7 +23145,7 @@ return br;
 //! based on (hr) translation by Bojan Marković
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -23291,7 +23292,7 @@ return bs;
 //! author : Juan G. Hurtado : https://github.com/juanghurtado
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -23384,7 +23385,7 @@ return ca;
 //! author : petrbela : https://github.com/petrbela
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -23561,7 +23562,7 @@ return cs;
 //! author : Anatoly Mironov : https://github.com/mirontoli
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -23630,7 +23631,7 @@ return cv;
 //! author : https://github.com/ryangreaves
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -23715,7 +23716,7 @@ return cy;
 //! author : Ulrik Nielsen : https://github.com/mrbase
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -23782,7 +23783,7 @@ return da;
 //! author : Mikolaj Dadela : https://github.com/mik01aj
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -23866,7 +23867,7 @@ return de;
 //! author : Mikolaj Dadela : https://github.com/mik01aj
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -23947,7 +23948,7 @@ return deAt;
 //! author : sschueller : https://github.com/sschueller
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -24030,7 +24031,7 @@ return deCh;
 //! author : Jawish Hameed : https://github.com/jawish
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -24135,7 +24136,7 @@ return dv;
 //! author : Aggelos Karalias : https://github.com/mehiel
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -24240,7 +24241,7 @@ return el;
 //! author : Jared Morse : https://github.com/jarcoal
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -24312,7 +24313,7 @@ return enAu;
 //! author : Jonathan Abourbih : https://github.com/jonbca
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -24380,7 +24381,7 @@ return enCa;
 //! author : Chris Gedrim : https://github.com/chrisgedrim
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -24452,7 +24453,7 @@ return enGb;
 //! author : Chris Cartlidge : https://github.com/chriscartlidge
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -24524,7 +24525,7 @@ return enIe;
 //! author : Luke McGregor : https://github.com/lukemcgregor
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -24598,7 +24599,7 @@ return enNz;
 //! comment : miestasmia corrected the translation by colindean
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -24674,7 +24675,7 @@ return eo;
 //! author : Julio Napurí : https://github.com/julionc
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -24761,7 +24762,7 @@ return es;
 //! locale : Spanish (Dominican Republic) [es-do]
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -24850,7 +24851,7 @@ return esDo;
 //! improvements : Illimar Tambek : https://github.com/ragulka
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -24934,7 +24935,7 @@ return et;
 //! author : Eneko Illarramendi : https://github.com/eillarra
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -25005,7 +25006,7 @@ return eu;
 //! author : Ebrahim Byagowi : https://github.com/ebraminio
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -25117,7 +25118,7 @@ return fa;
 //! author : Tarmo Aidantausta : https://github.com/bleadof
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -25229,7 +25230,7 @@ return fi;
 //! author : Ragnar Johannesen : https://github.com/ragnar123
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -25294,7 +25295,7 @@ return fo;
 //! author : John Fischer : https://github.com/jfroffice
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -25382,7 +25383,7 @@ return fr;
 //! author : Jonathan Abourbih : https://github.com/jonbca
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -25461,7 +25462,7 @@ return frCa;
 //! author : Gaspard Bucher : https://github.com/gaspard
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -25544,7 +25545,7 @@ return frCh;
 //! author : Robin van der Vliet : https://github.com/robin0van0der0v
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -25624,7 +25625,7 @@ return fy;
 //! author : Jon Ashdown : https://github.com/jonashdown
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -25705,7 +25706,7 @@ return gd;
 //! author : Juan G. Hurtado : https://github.com/juanghurtado
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -25787,7 +25788,7 @@ return gl;
 //! author : The Discoverer : https://github.com/WikiDiscoverer
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -25916,7 +25917,7 @@ return gomLatn;
 //! author : Tal Ater : https://github.com/TalAter
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -26018,7 +26019,7 @@ return he;
 //! author : Mayank Singhal : https://github.com/mayanksinghal
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -26147,7 +26148,7 @@ return hi;
 //! author : Bojan Marković : https://github.com/bmarkovic
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -26297,7 +26298,7 @@ return hr;
 //! author : Adam Brunner : https://github.com/adambrunner
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -26411,7 +26412,7 @@ return hu;
 //! author : Armendarabyan : https://github.com/armendarabyan
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -26512,7 +26513,7 @@ return hyAm;
 //! reference: http://id.wikisource.org/wiki/Pedoman_Umum_Ejaan_Bahasa_Indonesia_yang_Disempurnakan
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -26599,7 +26600,7 @@ return id;
 //! author : Hinrik Örn Sigurðsson : https://github.com/hinrik
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -26732,7 +26733,7 @@ return is;
 //! author: Mattia Larentis: https://github.com/nostalgiaz
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -26806,7 +26807,7 @@ return it;
 //! author : LI Long : https://github.com/baryon
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -26892,7 +26893,7 @@ return ja;
 //! reference: http://jv.wikipedia.org/wiki/Basa_Jawa
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -26979,7 +26980,7 @@ return jv;
 //! author : Irakli Janiashvili : https://github.com/irakli-janiashvili
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -27073,7 +27074,7 @@ return ka;
 //! authors : Nurlan Rakhimzhanov : https://github.com/nurlan
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -27165,7 +27166,7 @@ return kk;
 //! author : Kruy Vanna : https://github.com/kruyvanna
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -27228,7 +27229,7 @@ return km;
 //! author : Rajeev Naik : https://github.com/rajeevnaikte
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -27360,7 +27361,7 @@ return kn;
 //! author : Jeeeyul Lee <jeeeyul@gmail.com>
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -27433,7 +27434,7 @@ return ko;
 //! author : Chyngyz Arystan uulu : https://github.com/chyngyz
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -27527,7 +27528,7 @@ return ky;
 //! author : David Raison : https://github.com/kwisatz
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -27668,7 +27669,7 @@ return lb;
 //! author : Ryan Hart : https://github.com/ryanhart2
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -27743,7 +27744,7 @@ return lo;
 //! author : Mindaugas Mozūras : https://github.com/mmozuras
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -27866,7 +27867,7 @@ return lt;
 //! author : Jānis Elmeris : https://github.com/JanisE
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -27967,7 +27968,7 @@ return lv;
 //! author : Miodrag Nikač <miodrag@restartit.me> : https://github.com/miodragnikac
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -28083,7 +28084,7 @@ return me;
 //! author : John Corrigan <robbiecloset@gmail.com> : https://github.com/johnideal
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -28152,7 +28153,7 @@ return mi;
 //! author : Borislav Mickov : https://github.com/B0k0
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -28247,7 +28248,7 @@ return mk;
 //! author : Floyd Pink : https://github.com/floydpink
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -28334,7 +28335,7 @@ return ml;
 //! author : Vivek Athalye : https://github.com/vnathalye
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -28497,7 +28498,7 @@ return mr;
 //! author : Weldan Jamili : https://github.com/weldan
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -28585,7 +28586,7 @@ return ms;
 //! author : Weldan Jamili : https://github.com/weldan
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -28674,7 +28675,7 @@ return msMy;
 //! author : Tin Aung Lin : https://github.com/thanyawzinmin
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -28774,7 +28775,7 @@ return my;
 //!           Sigurd Gartmann : https://github.com/sigurdga
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -28841,7 +28842,7 @@ return nb;
 //! author : suvash : https://github.com/suvash
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -28970,7 +28971,7 @@ return ne;
 //! author : Jacob Middag : https://github.com/middagj
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -29063,7 +29064,7 @@ return nl;
 //! author : Jacob Middag : https://github.com/middagj
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -29155,7 +29156,7 @@ return nlBe;
 //! author : https://github.com/mechuwind
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -29220,7 +29221,7 @@ return nn;
 //! author : Harpreet Singh : https://github.com/harpreetkhalsagtbit
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -29349,7 +29350,7 @@ return paIn;
 //! author : Rafal Hirsz : https://github.com/evoL
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -29461,7 +29462,7 @@ return pl;
 //! author : Jefferson : https://github.com/jalex79
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -29531,7 +29532,7 @@ return pt;
 //! author : Caio Ribeiro Pereira : https://github.com/caio-ribeiro-pereira
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -29598,7 +29599,7 @@ return ptBr;
 //! author : Valentin Agachi : https://github.com/avaly
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -29679,7 +29680,7 @@ return ro;
 //! author : Коренберг Марк : https://github.com/socketpair
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -29865,7 +29866,7 @@ return ru;
 //! author : Narain Sagar : https://github.com/narainsagar
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -29968,7 +29969,7 @@ return sd;
 //! authors : Bård Rolstad Henriksen : https://github.com/karamell
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -30034,7 +30035,7 @@ return se;
 //! author : Sampath Sitinamaluwa : https://github.com/sampathsris
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -30111,7 +30112,7 @@ return si;
 //! based on work of petrbela : https://github.com/petrbela
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -30265,7 +30266,7 @@ return sk;
 //! author : Robert Sedovšek : https://github.com/sedovsek
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -30434,7 +30435,7 @@ return sl;
 //! author : Oerd Cukalla : https://github.com/oerd
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -30507,7 +30508,7 @@ return sq;
 //! author : Milan Janačković<milanjanackovic@gmail.com> : https://github.com/milan-j
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -30622,7 +30623,7 @@ return sr;
 //! author : Milan Janačković<milanjanackovic@gmail.com> : https://github.com/milan-j
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -30737,7 +30738,7 @@ return srCyrl;
 //! author : Nicolai Davies<mail@nicolai.io> : https://github.com/nicolaidavies
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -30831,7 +30832,7 @@ return ss;
 //! author : Jens Alm : https://github.com/ulmus
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -30905,7 +30906,7 @@ return sv;
 //! author : Fahad Kassim : https://github.com/fadsel
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -30969,7 +30970,7 @@ return sw;
 //! author : Arjunkumar Krishnamoorthy : https://github.com/tk120404
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -31104,7 +31105,7 @@ return ta;
 //! author : Krishna Chaitanya Thota : https://github.com/kcthota
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -31199,7 +31200,7 @@ return te;
 //! author : Onorio De J. Afonso : https://github.com/marobo
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -31271,7 +31272,7 @@ return tet;
 //! author : Kridsada Thanabulpong : https://github.com/sirn
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -31343,7 +31344,7 @@ return th;
 //! author : Dan Hagman : https://github.com/hagmandan
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -31410,7 +31411,7 @@ return tlPh;
 //! author : Dominika Kruk : https://github.com/amaranthrose
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -31536,7 +31537,7 @@ return tlh;
 //!           Burak Yiğit Kaya: https://github.com/BYK
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -31631,7 +31632,7 @@ return tr;
 //! author : Iustì Canun
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -31726,7 +31727,7 @@ return tzl;
 //! author : Abdel Said : https://github.com/abdelsaid
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -31789,7 +31790,7 @@ return tzm;
 //! author : Abdel Said : https://github.com/abdelsaid
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -31853,7 +31854,7 @@ return tzmLatn;
 //! Author : Menelion Elensúle : https://github.com/Oire
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -32009,7 +32010,7 @@ return uk;
 //! author : Zack : https://github.com/ZackVision
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -32112,7 +32113,7 @@ return ur;
 //! author : Sardor Muminov : https://github.com/muminoff
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -32175,7 +32176,7 @@ return uz;
 //! author : Rasulbek Mirzayev : github.com/Rasulbeeek
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -32238,7 +32239,7 @@ return uzLatn;
 //! author : Bang Nguyen : https://github.com/bangnk
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -32322,7 +32323,7 @@ return vi;
 //! author : Andrew Hood : https://github.com/andrewhood125
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -32395,7 +32396,7 @@ return xPseudo;
 //! author : Atolagbe Abisoye : https://github.com/andela-batolagbe
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -32461,7 +32462,7 @@ return yo;
 //! author : Zeno Zeng : https://github.com/zenozeng
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -32578,7 +32579,7 @@ return zhCn;
 //! author : Konstantin : https://github.com/skfd
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -32687,7 +32688,7 @@ return zhHk;
 //! author : Chris Lam : https://github.com/hehachris
 
 ;(function (global, factory) {
-    true ? factory(__webpack_require__(1)) :
+    true ? factory(__webpack_require__(0)) :
    typeof define === 'function' && define.amd ? define(['../moment'], factory) :
    factory(global.moment)
 }(this, (function (moment) { 'use strict';
@@ -33020,7 +33021,7 @@ module.exports = __webpack_require__(38);
 var global         = __webpack_require__(6)
   , has            = __webpack_require__(18)
   , DESCRIPTORS    = __webpack_require__(12)
-  , $export        = __webpack_require__(0)
+  , $export        = __webpack_require__(1)
   , redefine       = __webpack_require__(20)
   , META           = __webpack_require__(44).KEY
   , $fails         = __webpack_require__(7)
@@ -33290,7 +33291,7 @@ module.exports = function(it){
 /* 342 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var $export = __webpack_require__(0)
+var $export = __webpack_require__(1)
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
 $export($export.S, 'Object', {create: __webpack_require__(51)});
 
@@ -33298,7 +33299,7 @@ $export($export.S, 'Object', {create: __webpack_require__(51)});
 /* 343 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var $export = __webpack_require__(0);
+var $export = __webpack_require__(1);
 // 19.1.2.4 / 15.2.3.6 Object.defineProperty(O, P, Attributes)
 $export($export.S + $export.F * !__webpack_require__(12), 'Object', {defineProperty: __webpack_require__(13).f});
 
@@ -33306,7 +33307,7 @@ $export($export.S + $export.F * !__webpack_require__(12), 'Object', {definePrope
 /* 344 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var $export = __webpack_require__(0);
+var $export = __webpack_require__(1);
 // 19.1.2.3 / 15.2.3.7 Object.defineProperties(O, Properties)
 $export($export.S + $export.F * !__webpack_require__(12), 'Object', {defineProperties: __webpack_require__(149)});
 
@@ -33447,7 +33448,7 @@ __webpack_require__(34)('isExtensible', function($isExtensible){
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.3.1 Object.assign(target, source)
-var $export = __webpack_require__(0);
+var $export = __webpack_require__(1);
 
 $export($export.S + $export.F, 'Object', {assign: __webpack_require__(151)});
 
@@ -33456,7 +33457,7 @@ $export($export.S + $export.F, 'Object', {assign: __webpack_require__(151)});
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.3.10 Object.is(value1, value2)
-var $export = __webpack_require__(0);
+var $export = __webpack_require__(1);
 $export($export.S, 'Object', {is: __webpack_require__(152)});
 
 /***/ }),
@@ -33464,7 +33465,7 @@ $export($export.S, 'Object', {is: __webpack_require__(152)});
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.3.19 Object.setPrototypeOf(O, proto)
-var $export = __webpack_require__(0);
+var $export = __webpack_require__(1);
 $export($export.S, 'Object', {setPrototypeOf: __webpack_require__(104).set});
 
 /***/ }),
@@ -33488,7 +33489,7 @@ if(test + '' != '[object z]'){
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.2.3.2 / 15.3.4.5 Function.prototype.bind(thisArg, args...)
-var $export = __webpack_require__(0);
+var $export = __webpack_require__(1);
 
 $export($export.P, 'Function', {bind: __webpack_require__(153)});
 
@@ -33545,7 +33546,7 @@ if(!(HAS_INSTANCE in FunctionProto))__webpack_require__(13).f(FunctionProto, HAS
 /* 362 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var $export   = __webpack_require__(0)
+var $export   = __webpack_require__(1)
   , $parseInt = __webpack_require__(154);
 // 18.2.5 parseInt(string, radix)
 $export($export.G + $export.F * (parseInt != $parseInt), {parseInt: $parseInt});
@@ -33554,7 +33555,7 @@ $export($export.G + $export.F * (parseInt != $parseInt), {parseInt: $parseInt});
 /* 363 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var $export     = __webpack_require__(0)
+var $export     = __webpack_require__(1)
   , $parseFloat = __webpack_require__(155);
 // 18.2.4 parseFloat(string)
 $export($export.G + $export.F * (parseFloat != $parseFloat), {parseFloat: $parseFloat});
@@ -33640,7 +33641,7 @@ if(!$Number(' 0o1') || !$Number('0b1') || $Number('+0x1')){
 
 "use strict";
 
-var $export      = __webpack_require__(0)
+var $export      = __webpack_require__(1)
   , toInteger    = __webpack_require__(45)
   , aNumberValue = __webpack_require__(156)
   , repeat       = __webpack_require__(107)
@@ -33759,7 +33760,7 @@ $export($export.P + $export.F * (!!$toFixed && (
 
 "use strict";
 
-var $export      = __webpack_require__(0)
+var $export      = __webpack_require__(1)
   , $fails       = __webpack_require__(7)
   , aNumberValue = __webpack_require__(156)
   , $toPrecision = 1..toPrecision;
@@ -33782,7 +33783,7 @@ $export($export.P + $export.F * ($fails(function(){
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.1.2.1 Number.EPSILON
-var $export = __webpack_require__(0);
+var $export = __webpack_require__(1);
 
 $export($export.S, 'Number', {EPSILON: Math.pow(2, -52)});
 
@@ -33791,7 +33792,7 @@ $export($export.S, 'Number', {EPSILON: Math.pow(2, -52)});
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.1.2.2 Number.isFinite(number)
-var $export   = __webpack_require__(0)
+var $export   = __webpack_require__(1)
   , _isFinite = __webpack_require__(6).isFinite;
 
 $export($export.S, 'Number', {
@@ -33805,7 +33806,7 @@ $export($export.S, 'Number', {
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.1.2.3 Number.isInteger(number)
-var $export = __webpack_require__(0);
+var $export = __webpack_require__(1);
 
 $export($export.S, 'Number', {isInteger: __webpack_require__(157)});
 
@@ -33814,7 +33815,7 @@ $export($export.S, 'Number', {isInteger: __webpack_require__(157)});
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.1.2.4 Number.isNaN(number)
-var $export = __webpack_require__(0);
+var $export = __webpack_require__(1);
 
 $export($export.S, 'Number', {
   isNaN: function isNaN(number){
@@ -33827,7 +33828,7 @@ $export($export.S, 'Number', {
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.1.2.5 Number.isSafeInteger(number)
-var $export   = __webpack_require__(0)
+var $export   = __webpack_require__(1)
   , isInteger = __webpack_require__(157)
   , abs       = Math.abs;
 
@@ -33842,7 +33843,7 @@ $export($export.S, 'Number', {
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.1.2.6 Number.MAX_SAFE_INTEGER
-var $export = __webpack_require__(0);
+var $export = __webpack_require__(1);
 
 $export($export.S, 'Number', {MAX_SAFE_INTEGER: 0x1fffffffffffff});
 
@@ -33851,7 +33852,7 @@ $export($export.S, 'Number', {MAX_SAFE_INTEGER: 0x1fffffffffffff});
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.1.2.10 Number.MIN_SAFE_INTEGER
-var $export = __webpack_require__(0);
+var $export = __webpack_require__(1);
 
 $export($export.S, 'Number', {MIN_SAFE_INTEGER: -0x1fffffffffffff});
 
@@ -33859,7 +33860,7 @@ $export($export.S, 'Number', {MIN_SAFE_INTEGER: -0x1fffffffffffff});
 /* 374 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var $export     = __webpack_require__(0)
+var $export     = __webpack_require__(1)
   , $parseFloat = __webpack_require__(155);
 // 20.1.2.12 Number.parseFloat(string)
 $export($export.S + $export.F * (Number.parseFloat != $parseFloat), 'Number', {parseFloat: $parseFloat});
@@ -33868,7 +33869,7 @@ $export($export.S + $export.F * (Number.parseFloat != $parseFloat), 'Number', {p
 /* 375 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var $export   = __webpack_require__(0)
+var $export   = __webpack_require__(1)
   , $parseInt = __webpack_require__(154);
 // 20.1.2.13 Number.parseInt(string, radix)
 $export($export.S + $export.F * (Number.parseInt != $parseInt), 'Number', {parseInt: $parseInt});
@@ -33878,7 +33879,7 @@ $export($export.S + $export.F * (Number.parseInt != $parseInt), 'Number', {parse
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.3 Math.acosh(x)
-var $export = __webpack_require__(0)
+var $export = __webpack_require__(1)
   , log1p   = __webpack_require__(158)
   , sqrt    = Math.sqrt
   , $acosh  = Math.acosh;
@@ -33901,7 +33902,7 @@ $export($export.S + $export.F * !($acosh
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.5 Math.asinh(x)
-var $export = __webpack_require__(0)
+var $export = __webpack_require__(1)
   , $asinh  = Math.asinh;
 
 function asinh(x){
@@ -33916,7 +33917,7 @@ $export($export.S + $export.F * !($asinh && 1 / $asinh(0) > 0), 'Math', {asinh: 
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.7 Math.atanh(x)
-var $export = __webpack_require__(0)
+var $export = __webpack_require__(1)
   , $atanh  = Math.atanh;
 
 // Tor Browser bug: Math.atanh(-0) -> 0 
@@ -33931,7 +33932,7 @@ $export($export.S + $export.F * !($atanh && 1 / $atanh(-0) < 0), 'Math', {
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.9 Math.cbrt(x)
-var $export = __webpack_require__(0)
+var $export = __webpack_require__(1)
   , sign    = __webpack_require__(108);
 
 $export($export.S, 'Math', {
@@ -33945,7 +33946,7 @@ $export($export.S, 'Math', {
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.11 Math.clz32(x)
-var $export = __webpack_require__(0);
+var $export = __webpack_require__(1);
 
 $export($export.S, 'Math', {
   clz32: function clz32(x){
@@ -33958,7 +33959,7 @@ $export($export.S, 'Math', {
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.12 Math.cosh(x)
-var $export = __webpack_require__(0)
+var $export = __webpack_require__(1)
   , exp     = Math.exp;
 
 $export($export.S, 'Math', {
@@ -33972,7 +33973,7 @@ $export($export.S, 'Math', {
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.14 Math.expm1(x)
-var $export = __webpack_require__(0)
+var $export = __webpack_require__(1)
   , $expm1  = __webpack_require__(109);
 
 $export($export.S + $export.F * ($expm1 != Math.expm1), 'Math', {expm1: $expm1});
@@ -33982,7 +33983,7 @@ $export($export.S + $export.F * ($expm1 != Math.expm1), 'Math', {expm1: $expm1})
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.16 Math.fround(x)
-var $export   = __webpack_require__(0)
+var $export   = __webpack_require__(1)
   , sign      = __webpack_require__(108)
   , pow       = Math.pow
   , EPSILON   = pow(2, -52)
@@ -34013,7 +34014,7 @@ $export($export.S, 'Math', {
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.17 Math.hypot([value1[, value2[, … ]]])
-var $export = __webpack_require__(0)
+var $export = __webpack_require__(1)
   , abs     = Math.abs;
 
 $export($export.S, 'Math', {
@@ -34043,7 +34044,7 @@ $export($export.S, 'Math', {
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.18 Math.imul(x, y)
-var $export = __webpack_require__(0)
+var $export = __webpack_require__(1)
   , $imul   = Math.imul;
 
 // some WebKit versions fails with big numbers, some has wrong arity
@@ -34065,7 +34066,7 @@ $export($export.S + $export.F * __webpack_require__(7)(function(){
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.21 Math.log10(x)
-var $export = __webpack_require__(0);
+var $export = __webpack_require__(1);
 
 $export($export.S, 'Math', {
   log10: function log10(x){
@@ -34078,7 +34079,7 @@ $export($export.S, 'Math', {
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.20 Math.log1p(x)
-var $export = __webpack_require__(0);
+var $export = __webpack_require__(1);
 
 $export($export.S, 'Math', {log1p: __webpack_require__(158)});
 
@@ -34087,7 +34088,7 @@ $export($export.S, 'Math', {log1p: __webpack_require__(158)});
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.22 Math.log2(x)
-var $export = __webpack_require__(0);
+var $export = __webpack_require__(1);
 
 $export($export.S, 'Math', {
   log2: function log2(x){
@@ -34100,7 +34101,7 @@ $export($export.S, 'Math', {
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.28 Math.sign(x)
-var $export = __webpack_require__(0);
+var $export = __webpack_require__(1);
 
 $export($export.S, 'Math', {sign: __webpack_require__(108)});
 
@@ -34109,7 +34110,7 @@ $export($export.S, 'Math', {sign: __webpack_require__(108)});
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.30 Math.sinh(x)
-var $export = __webpack_require__(0)
+var $export = __webpack_require__(1)
   , expm1   = __webpack_require__(109)
   , exp     = Math.exp;
 
@@ -34129,7 +34130,7 @@ $export($export.S + $export.F * __webpack_require__(7)(function(){
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.33 Math.tanh(x)
-var $export = __webpack_require__(0)
+var $export = __webpack_require__(1)
   , expm1   = __webpack_require__(109)
   , exp     = Math.exp;
 
@@ -34146,7 +34147,7 @@ $export($export.S, 'Math', {
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.2.2.34 Math.trunc(x)
-var $export = __webpack_require__(0);
+var $export = __webpack_require__(1);
 
 $export($export.S, 'Math', {
   trunc: function trunc(it){
@@ -34158,7 +34159,7 @@ $export($export.S, 'Math', {
 /* 393 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var $export        = __webpack_require__(0)
+var $export        = __webpack_require__(1)
   , toIndex        = __webpack_require__(50)
   , fromCharCode   = String.fromCharCode
   , $fromCodePoint = String.fromCodePoint;
@@ -34186,7 +34187,7 @@ $export($export.S + $export.F * (!!$fromCodePoint && $fromCodePoint.length != 1)
 /* 394 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var $export   = __webpack_require__(0)
+var $export   = __webpack_require__(1)
   , toIObject = __webpack_require__(22)
   , toLength  = __webpack_require__(15);
 
@@ -34247,7 +34248,7 @@ __webpack_require__(111)(String, 'String', function(iterated){
 
 "use strict";
 
-var $export = __webpack_require__(0)
+var $export = __webpack_require__(1)
   , $at     = __webpack_require__(110)(false);
 $export($export.P, 'String', {
   // 21.1.3.3 String.prototype.codePointAt(pos)
@@ -34263,7 +34264,7 @@ $export($export.P, 'String', {
 "use strict";
 // 21.1.3.6 String.prototype.endsWith(searchString [, endPosition])
 
-var $export   = __webpack_require__(0)
+var $export   = __webpack_require__(1)
   , toLength  = __webpack_require__(15)
   , context   = __webpack_require__(113)
   , ENDS_WITH = 'endsWith'
@@ -34289,7 +34290,7 @@ $export($export.P + $export.F * __webpack_require__(114)(ENDS_WITH), 'String', {
 "use strict";
 // 21.1.3.7 String.prototype.includes(searchString, position = 0)
 
-var $export  = __webpack_require__(0)
+var $export  = __webpack_require__(1)
   , context  = __webpack_require__(113)
   , INCLUDES = 'includes';
 
@@ -34304,7 +34305,7 @@ $export($export.P + $export.F * __webpack_require__(114)(INCLUDES), 'String', {
 /* 400 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var $export = __webpack_require__(0);
+var $export = __webpack_require__(1);
 
 $export($export.P, 'String', {
   // 21.1.3.13 String.prototype.repeat(count)
@@ -34318,7 +34319,7 @@ $export($export.P, 'String', {
 "use strict";
 // 21.1.3.18 String.prototype.startsWith(searchString [, position ])
 
-var $export     = __webpack_require__(0)
+var $export     = __webpack_require__(1)
   , toLength    = __webpack_require__(15)
   , context     = __webpack_require__(113)
   , STARTS_WITH = 'startsWith'
@@ -34509,7 +34510,7 @@ __webpack_require__(23)('sup', function(createHTML){
 /***/ (function(module, exports, __webpack_require__) {
 
 // 20.3.3.1 / 15.9.4.4 Date.now()
-var $export = __webpack_require__(0);
+var $export = __webpack_require__(1);
 
 $export($export.S, 'Date', {now: function(){ return new Date().getTime(); }});
 
@@ -34519,7 +34520,7 @@ $export($export.S, 'Date', {now: function(){ return new Date().getTime(); }});
 
 "use strict";
 
-var $export     = __webpack_require__(0)
+var $export     = __webpack_require__(1)
   , toObject    = __webpack_require__(17)
   , toPrimitive = __webpack_require__(33);
 
@@ -34540,7 +34541,7 @@ $export($export.P + $export.F * __webpack_require__(7)(function(){
 "use strict";
 
 // 20.3.4.36 / 15.9.5.43 Date.prototype.toISOString()
-var $export = __webpack_require__(0)
+var $export = __webpack_require__(1)
   , fails   = __webpack_require__(7)
   , getTime = Date.prototype.getTime;
 
@@ -34612,7 +34613,7 @@ module.exports = function(hint){
 /***/ (function(module, exports, __webpack_require__) {
 
 // 22.1.2.2 / 15.4.3.2 Array.isArray(arg)
-var $export = __webpack_require__(0);
+var $export = __webpack_require__(1);
 
 $export($export.S, 'Array', {isArray: __webpack_require__(102)});
 
@@ -34623,7 +34624,7 @@ $export($export.S, 'Array', {isArray: __webpack_require__(102)});
 "use strict";
 
 var ctx            = __webpack_require__(39)
-  , $export        = __webpack_require__(0)
+  , $export        = __webpack_require__(1)
   , toObject       = __webpack_require__(17)
   , call           = __webpack_require__(159)
   , isArrayIter    = __webpack_require__(115)
@@ -34666,7 +34667,7 @@ $export($export.S + $export.F * !__webpack_require__(83)(function(iter){ Array.f
 
 "use strict";
 
-var $export        = __webpack_require__(0)
+var $export        = __webpack_require__(1)
   , createProperty = __webpack_require__(116);
 
 // WebKit Array.of isn't generic
@@ -34692,7 +34693,7 @@ $export($export.S + $export.F * __webpack_require__(7)(function(){
 "use strict";
 
 // 22.1.3.13 Array.prototype.join(separator)
-var $export   = __webpack_require__(0)
+var $export   = __webpack_require__(1)
   , toIObject = __webpack_require__(22)
   , arrayJoin = [].join;
 
@@ -34709,7 +34710,7 @@ $export($export.P + $export.F * (__webpack_require__(71) != Object || !__webpack
 
 "use strict";
 
-var $export    = __webpack_require__(0)
+var $export    = __webpack_require__(1)
   , html       = __webpack_require__(103)
   , cof        = __webpack_require__(30)
   , toIndex    = __webpack_require__(50)
@@ -34743,7 +34744,7 @@ $export($export.P + $export.F * __webpack_require__(7)(function(){
 
 "use strict";
 
-var $export   = __webpack_require__(0)
+var $export   = __webpack_require__(1)
   , aFunction = __webpack_require__(21)
   , toObject  = __webpack_require__(17)
   , fails     = __webpack_require__(7)
@@ -34772,7 +34773,7 @@ $export($export.P + $export.F * (fails(function(){
 
 "use strict";
 
-var $export  = __webpack_require__(0)
+var $export  = __webpack_require__(1)
   , $forEach = __webpack_require__(35)(0)
   , STRICT   = __webpack_require__(32)([].forEach, true);
 
@@ -34821,7 +34822,7 @@ module.exports = function(original){
 
 "use strict";
 
-var $export = __webpack_require__(0)
+var $export = __webpack_require__(1)
   , $map    = __webpack_require__(35)(1);
 
 $export($export.P + $export.F * !__webpack_require__(32)([].map, true), 'Array', {
@@ -34837,7 +34838,7 @@ $export($export.P + $export.F * !__webpack_require__(32)([].map, true), 'Array',
 
 "use strict";
 
-var $export = __webpack_require__(0)
+var $export = __webpack_require__(1)
   , $filter = __webpack_require__(35)(2);
 
 $export($export.P + $export.F * !__webpack_require__(32)([].filter, true), 'Array', {
@@ -34853,7 +34854,7 @@ $export($export.P + $export.F * !__webpack_require__(32)([].filter, true), 'Arra
 
 "use strict";
 
-var $export = __webpack_require__(0)
+var $export = __webpack_require__(1)
   , $some   = __webpack_require__(35)(3);
 
 $export($export.P + $export.F * !__webpack_require__(32)([].some, true), 'Array', {
@@ -34869,7 +34870,7 @@ $export($export.P + $export.F * !__webpack_require__(32)([].some, true), 'Array'
 
 "use strict";
 
-var $export = __webpack_require__(0)
+var $export = __webpack_require__(1)
   , $every  = __webpack_require__(35)(4);
 
 $export($export.P + $export.F * !__webpack_require__(32)([].every, true), 'Array', {
@@ -34885,7 +34886,7 @@ $export($export.P + $export.F * !__webpack_require__(32)([].every, true), 'Array
 
 "use strict";
 
-var $export = __webpack_require__(0)
+var $export = __webpack_require__(1)
   , $reduce = __webpack_require__(160);
 
 $export($export.P + $export.F * !__webpack_require__(32)([].reduce, true), 'Array', {
@@ -34901,7 +34902,7 @@ $export($export.P + $export.F * !__webpack_require__(32)([].reduce, true), 'Arra
 
 "use strict";
 
-var $export = __webpack_require__(0)
+var $export = __webpack_require__(1)
   , $reduce = __webpack_require__(160);
 
 $export($export.P + $export.F * !__webpack_require__(32)([].reduceRight, true), 'Array', {
@@ -34917,7 +34918,7 @@ $export($export.P + $export.F * !__webpack_require__(32)([].reduceRight, true), 
 
 "use strict";
 
-var $export       = __webpack_require__(0)
+var $export       = __webpack_require__(1)
   , $indexOf      = __webpack_require__(79)(false)
   , $native       = [].indexOf
   , NEGATIVE_ZERO = !!$native && 1 / [1].indexOf(1, -0) < 0;
@@ -34938,7 +34939,7 @@ $export($export.P + $export.F * (NEGATIVE_ZERO || !__webpack_require__(32)($nati
 
 "use strict";
 
-var $export       = __webpack_require__(0)
+var $export       = __webpack_require__(1)
   , toIObject     = __webpack_require__(22)
   , toInteger     = __webpack_require__(45)
   , toLength      = __webpack_require__(15)
@@ -34965,7 +34966,7 @@ $export($export.P + $export.F * (NEGATIVE_ZERO || !__webpack_require__(32)($nati
 /***/ (function(module, exports, __webpack_require__) {
 
 // 22.1.3.3 Array.prototype.copyWithin(target, start, end = this.length)
-var $export = __webpack_require__(0);
+var $export = __webpack_require__(1);
 
 $export($export.P, 'Array', {copyWithin: __webpack_require__(161)});
 
@@ -34976,7 +34977,7 @@ __webpack_require__(61)('copyWithin');
 /***/ (function(module, exports, __webpack_require__) {
 
 // 22.1.3.6 Array.prototype.fill(value, start = 0, end = this.length)
-var $export = __webpack_require__(0);
+var $export = __webpack_require__(1);
 
 $export($export.P, 'Array', {fill: __webpack_require__(118)});
 
@@ -34989,7 +34990,7 @@ __webpack_require__(61)('fill');
 "use strict";
 
 // 22.1.3.8 Array.prototype.find(predicate, thisArg = undefined)
-var $export = __webpack_require__(0)
+var $export = __webpack_require__(1)
   , $find   = __webpack_require__(35)(5)
   , KEY     = 'find'
   , forced  = true;
@@ -35009,7 +35010,7 @@ __webpack_require__(61)(KEY);
 "use strict";
 
 // 22.1.3.9 Array.prototype.findIndex(predicate, thisArg = undefined)
-var $export = __webpack_require__(0)
+var $export = __webpack_require__(1)
   , $find   = __webpack_require__(35)(6)
   , KEY     = 'findIndex'
   , forced  = true;
@@ -35239,7 +35240,7 @@ var LIBRARY            = __webpack_require__(48)
   , global             = __webpack_require__(6)
   , ctx                = __webpack_require__(39)
   , classof            = __webpack_require__(73)
-  , $export            = __webpack_require__(0)
+  , $export            = __webpack_require__(1)
   , isObject           = __webpack_require__(9)
   , aFunction          = __webpack_require__(21)
   , anInstance         = __webpack_require__(54)
@@ -35558,7 +35559,7 @@ __webpack_require__(86)('WeakSet', function(get){
 
 "use strict";
 
-var $export      = __webpack_require__(0)
+var $export      = __webpack_require__(1)
   , $typed       = __webpack_require__(87)
   , buffer       = __webpack_require__(123)
   , anObject     = __webpack_require__(5)
@@ -35608,7 +35609,7 @@ __webpack_require__(53)(ARRAY_BUFFER);
 /* 452 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var $export = __webpack_require__(0);
+var $export = __webpack_require__(1);
 $export($export.G + $export.W + $export.F * !__webpack_require__(87).ABV, {
   DataView: __webpack_require__(123).DataView
 });
@@ -35708,7 +35709,7 @@ __webpack_require__(40)('Float64', 8, function(init){
 /***/ (function(module, exports, __webpack_require__) {
 
 // 26.1.1 Reflect.apply(target, thisArgument, argumentsList)
-var $export   = __webpack_require__(0)
+var $export   = __webpack_require__(1)
   , aFunction = __webpack_require__(21)
   , anObject  = __webpack_require__(5)
   , rApply    = (__webpack_require__(6).Reflect || {}).apply
@@ -35729,7 +35730,7 @@ $export($export.S + $export.F * !__webpack_require__(7)(function(){
 /***/ (function(module, exports, __webpack_require__) {
 
 // 26.1.2 Reflect.construct(target, argumentsList [, newTarget])
-var $export    = __webpack_require__(0)
+var $export    = __webpack_require__(1)
   , create     = __webpack_require__(51)
   , aFunction  = __webpack_require__(21)
   , anObject   = __webpack_require__(5)
@@ -35782,7 +35783,7 @@ $export($export.S + $export.F * (NEW_TARGET_BUG || ARGS_BUG), 'Reflect', {
 
 // 26.1.3 Reflect.defineProperty(target, propertyKey, attributes)
 var dP          = __webpack_require__(13)
-  , $export     = __webpack_require__(0)
+  , $export     = __webpack_require__(1)
   , anObject    = __webpack_require__(5)
   , toPrimitive = __webpack_require__(33);
 
@@ -35808,7 +35809,7 @@ $export($export.S + $export.F * __webpack_require__(7)(function(){
 /***/ (function(module, exports, __webpack_require__) {
 
 // 26.1.4 Reflect.deleteProperty(target, propertyKey)
-var $export  = __webpack_require__(0)
+var $export  = __webpack_require__(1)
   , gOPD     = __webpack_require__(25).f
   , anObject = __webpack_require__(5);
 
@@ -35826,7 +35827,7 @@ $export($export.S, 'Reflect', {
 "use strict";
 
 // 26.1.5 Reflect.enumerate(target)
-var $export  = __webpack_require__(0)
+var $export  = __webpack_require__(1)
   , anObject = __webpack_require__(5);
 var Enumerate = function(iterated){
   this._t = anObject(iterated); // target
@@ -35859,7 +35860,7 @@ $export($export.S, 'Reflect', {
 var gOPD           = __webpack_require__(25)
   , getPrototypeOf = __webpack_require__(26)
   , has            = __webpack_require__(18)
-  , $export        = __webpack_require__(0)
+  , $export        = __webpack_require__(1)
   , isObject       = __webpack_require__(9)
   , anObject       = __webpack_require__(5);
 
@@ -35883,7 +35884,7 @@ $export($export.S, 'Reflect', {get: get});
 
 // 26.1.7 Reflect.getOwnPropertyDescriptor(target, propertyKey)
 var gOPD     = __webpack_require__(25)
-  , $export  = __webpack_require__(0)
+  , $export  = __webpack_require__(1)
   , anObject = __webpack_require__(5);
 
 $export($export.S, 'Reflect', {
@@ -35897,7 +35898,7 @@ $export($export.S, 'Reflect', {
 /***/ (function(module, exports, __webpack_require__) {
 
 // 26.1.8 Reflect.getPrototypeOf(target)
-var $export  = __webpack_require__(0)
+var $export  = __webpack_require__(1)
   , getProto = __webpack_require__(26)
   , anObject = __webpack_require__(5);
 
@@ -35912,7 +35913,7 @@ $export($export.S, 'Reflect', {
 /***/ (function(module, exports, __webpack_require__) {
 
 // 26.1.9 Reflect.has(target, propertyKey)
-var $export = __webpack_require__(0);
+var $export = __webpack_require__(1);
 
 $export($export.S, 'Reflect', {
   has: function has(target, propertyKey){
@@ -35925,7 +35926,7 @@ $export($export.S, 'Reflect', {
 /***/ (function(module, exports, __webpack_require__) {
 
 // 26.1.10 Reflect.isExtensible(target)
-var $export       = __webpack_require__(0)
+var $export       = __webpack_require__(1)
   , anObject      = __webpack_require__(5)
   , $isExtensible = Object.isExtensible;
 
@@ -35941,7 +35942,7 @@ $export($export.S, 'Reflect', {
 /***/ (function(module, exports, __webpack_require__) {
 
 // 26.1.11 Reflect.ownKeys(target)
-var $export = __webpack_require__(0);
+var $export = __webpack_require__(1);
 
 $export($export.S, 'Reflect', {ownKeys: __webpack_require__(169)});
 
@@ -35950,7 +35951,7 @@ $export($export.S, 'Reflect', {ownKeys: __webpack_require__(169)});
 /***/ (function(module, exports, __webpack_require__) {
 
 // 26.1.12 Reflect.preventExtensions(target)
-var $export            = __webpack_require__(0)
+var $export            = __webpack_require__(1)
   , anObject           = __webpack_require__(5)
   , $preventExtensions = Object.preventExtensions;
 
@@ -35975,7 +35976,7 @@ var dP             = __webpack_require__(13)
   , gOPD           = __webpack_require__(25)
   , getPrototypeOf = __webpack_require__(26)
   , has            = __webpack_require__(18)
-  , $export        = __webpack_require__(0)
+  , $export        = __webpack_require__(1)
   , createDesc     = __webpack_require__(43)
   , anObject       = __webpack_require__(5)
   , isObject       = __webpack_require__(9);
@@ -36007,7 +36008,7 @@ $export($export.S, 'Reflect', {set: set});
 /***/ (function(module, exports, __webpack_require__) {
 
 // 26.1.14 Reflect.setPrototypeOf(target, proto)
-var $export  = __webpack_require__(0)
+var $export  = __webpack_require__(1)
   , setProto = __webpack_require__(104);
 
 if(setProto)$export($export.S, 'Reflect', {
@@ -36029,7 +36030,7 @@ if(setProto)$export($export.S, 'Reflect', {
 "use strict";
 
 // https://github.com/tc39/Array.prototype.includes
-var $export   = __webpack_require__(0)
+var $export   = __webpack_require__(1)
   , $includes = __webpack_require__(79)(true);
 
 $export($export.P, 'Array', {
@@ -36047,7 +36048,7 @@ __webpack_require__(61)('includes');
 "use strict";
 
 // https://github.com/mathiasbynens/String.prototype.at
-var $export = __webpack_require__(0)
+var $export = __webpack_require__(1)
   , $at     = __webpack_require__(110)(true);
 
 $export($export.P, 'String', {
@@ -36063,7 +36064,7 @@ $export($export.P, 'String', {
 "use strict";
 
 // https://github.com/tc39/proposal-string-pad-start-end
-var $export = __webpack_require__(0)
+var $export = __webpack_require__(1)
   , $pad    = __webpack_require__(170);
 
 $export($export.P, 'String', {
@@ -36079,7 +36080,7 @@ $export($export.P, 'String', {
 "use strict";
 
 // https://github.com/tc39/proposal-string-pad-start-end
-var $export = __webpack_require__(0)
+var $export = __webpack_require__(1)
   , $pad    = __webpack_require__(170);
 
 $export($export.P, 'String', {
@@ -36121,7 +36122,7 @@ __webpack_require__(59)('trimRight', function($trim){
 "use strict";
 
 // https://tc39.github.io/String.prototype.matchAll/
-var $export     = __webpack_require__(0)
+var $export     = __webpack_require__(1)
   , defined     = __webpack_require__(31)
   , toLength    = __webpack_require__(15)
   , isRegExp    = __webpack_require__(82)
@@ -36167,7 +36168,7 @@ __webpack_require__(99)('observable');
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://github.com/tc39/proposal-object-getownpropertydescriptors
-var $export        = __webpack_require__(0)
+var $export        = __webpack_require__(1)
   , ownKeys        = __webpack_require__(169)
   , toIObject      = __webpack_require__(22)
   , gOPD           = __webpack_require__(25)
@@ -36191,7 +36192,7 @@ $export($export.S, 'Object', {
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://github.com/tc39/proposal-object-values-entries
-var $export = __webpack_require__(0)
+var $export = __webpack_require__(1)
   , $values = __webpack_require__(171)(false);
 
 $export($export.S, 'Object', {
@@ -36205,7 +36206,7 @@ $export($export.S, 'Object', {
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://github.com/tc39/proposal-object-values-entries
-var $export  = __webpack_require__(0)
+var $export  = __webpack_require__(1)
   , $entries = __webpack_require__(171)(true);
 
 $export($export.S, 'Object', {
@@ -36220,7 +36221,7 @@ $export($export.S, 'Object', {
 
 "use strict";
 
-var $export         = __webpack_require__(0)
+var $export         = __webpack_require__(1)
   , toObject        = __webpack_require__(17)
   , aFunction       = __webpack_require__(21)
   , $defineProperty = __webpack_require__(13);
@@ -36238,7 +36239,7 @@ __webpack_require__(12) && $export($export.P + __webpack_require__(88), 'Object'
 
 "use strict";
 
-var $export         = __webpack_require__(0)
+var $export         = __webpack_require__(1)
   , toObject        = __webpack_require__(17)
   , aFunction       = __webpack_require__(21)
   , $defineProperty = __webpack_require__(13);
@@ -36256,7 +36257,7 @@ __webpack_require__(12) && $export($export.P + __webpack_require__(88), 'Object'
 
 "use strict";
 
-var $export                  = __webpack_require__(0)
+var $export                  = __webpack_require__(1)
   , toObject                 = __webpack_require__(17)
   , toPrimitive              = __webpack_require__(33)
   , getPrototypeOf           = __webpack_require__(26)
@@ -36280,7 +36281,7 @@ __webpack_require__(12) && $export($export.P + __webpack_require__(88), 'Object'
 
 "use strict";
 
-var $export                  = __webpack_require__(0)
+var $export                  = __webpack_require__(1)
   , toObject                 = __webpack_require__(17)
   , toPrimitive              = __webpack_require__(33)
   , getPrototypeOf           = __webpack_require__(26)
@@ -36303,7 +36304,7 @@ __webpack_require__(12) && $export($export.P + __webpack_require__(88), 'Object'
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://github.com/DavidBruant/Map-Set.prototype.toJSON
-var $export  = __webpack_require__(0);
+var $export  = __webpack_require__(1);
 
 $export($export.P + $export.R, 'Map', {toJSON: __webpack_require__(172)('Map')});
 
@@ -36312,7 +36313,7 @@ $export($export.P + $export.R, 'Map', {toJSON: __webpack_require__(172)('Map')})
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://github.com/DavidBruant/Map-Set.prototype.toJSON
-var $export  = __webpack_require__(0);
+var $export  = __webpack_require__(1);
 
 $export($export.P + $export.R, 'Set', {toJSON: __webpack_require__(172)('Set')});
 
@@ -36321,7 +36322,7 @@ $export($export.P + $export.R, 'Set', {toJSON: __webpack_require__(172)('Set')})
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://github.com/ljharb/proposal-global
-var $export = __webpack_require__(0);
+var $export = __webpack_require__(1);
 
 $export($export.S, 'System', {global: __webpack_require__(6)});
 
@@ -36330,7 +36331,7 @@ $export($export.S, 'System', {global: __webpack_require__(6)});
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://github.com/ljharb/proposal-is-error
-var $export = __webpack_require__(0)
+var $export = __webpack_require__(1)
   , cof     = __webpack_require__(30);
 
 $export($export.S, 'Error', {
@@ -36344,7 +36345,7 @@ $export($export.S, 'Error', {
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://gist.github.com/BrendanEich/4294d5c212a6d2254703
-var $export = __webpack_require__(0);
+var $export = __webpack_require__(1);
 
 $export($export.S, 'Math', {
   iaddh: function iaddh(x0, x1, y0, y1){
@@ -36360,7 +36361,7 @@ $export($export.S, 'Math', {
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://gist.github.com/BrendanEich/4294d5c212a6d2254703
-var $export = __webpack_require__(0);
+var $export = __webpack_require__(1);
 
 $export($export.S, 'Math', {
   isubh: function isubh(x0, x1, y0, y1){
@@ -36376,7 +36377,7 @@ $export($export.S, 'Math', {
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://gist.github.com/BrendanEich/4294d5c212a6d2254703
-var $export = __webpack_require__(0);
+var $export = __webpack_require__(1);
 
 $export($export.S, 'Math', {
   imulh: function imulh(u, v){
@@ -36397,7 +36398,7 @@ $export($export.S, 'Math', {
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://gist.github.com/BrendanEich/4294d5c212a6d2254703
-var $export = __webpack_require__(0);
+var $export = __webpack_require__(1);
 
 $export($export.S, 'Math', {
   umulh: function umulh(u, v){
@@ -36579,7 +36580,7 @@ metadata.exp({metadata: function metadata(metadataKey, metadataValue){
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://github.com/rwaldron/tc39-notes/blob/master/es6/2014-09/sept-25.md#510-globalasap-for-enqueuing-a-microtask
-var $export   = __webpack_require__(0)
+var $export   = __webpack_require__(1)
   , microtask = __webpack_require__(122)()
   , process   = __webpack_require__(6).process
   , isNode    = __webpack_require__(30)(process) == 'process';
@@ -36598,7 +36599,7 @@ $export($export.G, {
 "use strict";
 
 // https://github.com/zenparsing/es-observable
-var $export     = __webpack_require__(0)
+var $export     = __webpack_require__(1)
   , global      = __webpack_require__(6)
   , core        = __webpack_require__(38)
   , microtask   = __webpack_require__(122)()
@@ -36802,7 +36803,7 @@ __webpack_require__(53)('Observable');
 
 // ie9- setTimeout & setInterval additional parameters fix
 var global     = __webpack_require__(6)
-  , $export    = __webpack_require__(0)
+  , $export    = __webpack_require__(1)
   , invoke     = __webpack_require__(81)
   , partial    = __webpack_require__(512)
   , navigator  = global.navigator
@@ -36860,7 +36861,7 @@ module.exports = __webpack_require__(6);
 /* 514 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var $export = __webpack_require__(0)
+var $export = __webpack_require__(1)
   , $task   = __webpack_require__(121);
 $export($export.G + $export.B, {
   setImmediate:   $task.set,
@@ -37649,7 +37650,7 @@ module.exports = __webpack_require__(38).RegExp.escape;
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://github.com/benjamingr/RexExp.escape
-var $export = __webpack_require__(0)
+var $export = __webpack_require__(1)
   , $re     = __webpack_require__(519)(/[\\^$*+?.()|[\]{}]/g, '\\$&');
 
 $export($export.S, 'RegExp', {escape: function escape(it){ return $re(it); }});
@@ -50644,9 +50645,10 @@ exports.get_access_token = get_access_token;
 exports.watch_logout_request = watch_logout_request;
 exports.watch_expenses_request = watch_expenses_request;
 exports.watch_expense_submit = watch_expense_submit;
+exports.watch_expense_delete = watch_expense_delete;
 exports.default = root_saga;
 
-var _moment = __webpack_require__(1);
+var _moment = __webpack_require__(0);
 
 var _moment2 = _interopRequireDefault(_moment);
 
@@ -50666,8 +50668,9 @@ var _api2 = _interopRequireDefault(_api);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var _marked = [login_fetch, watch_login_request, refresh_fetch, get_access_token, logout, watch_logout_request, expenses_fetch, watch_expenses_request, expense_submit, watch_expense_submit, root_saga].map(regeneratorRuntime.mark);
+var _marked = [login_fetch, watch_login_request, refresh_fetch, get_access_token, logout, watch_logout_request, expenses_fetch, watch_expenses_request, expense_submit, watch_expense_submit, expense_delete, watch_expense_delete, root_saga].map(regeneratorRuntime.mark);
 
+// Store selector for authorization - necessary to use token in requests
 var get_auth = function get_auth(state) {
     return state.auth;
 };
@@ -50901,7 +50904,7 @@ function watch_expenses_request() {
 
 // Expense Submit
 function expense_submit(action) {
-    var access_token, timestamp, amount, description, expenses;
+    var access_token, timestamp, amount, description, response;
     return regeneratorRuntime.wrap(function expense_submit$(_context9) {
         while (1) {
             switch (_context9.prev = _context9.next) {
@@ -50919,7 +50922,7 @@ function expense_submit(action) {
                     return (0, _effects.call)(_api2.default.expense_submit, access_token, timestamp, amount, description);
 
                 case 9:
-                    expenses = _context9.sent;
+                    response = _context9.sent;
                     _context9.next = 12;
                     return (0, _effects.put)({ type: _reducers.EXPENSES_REQUEST });
 
@@ -50955,20 +50958,79 @@ function watch_expense_submit() {
     }, _marked[9], this);
 }
 
-function root_saga() {
-    return regeneratorRuntime.wrap(function root_saga$(_context11) {
+// Expense Delete
+function expense_delete(action) {
+    var access_token, expense_id, expenses;
+    return regeneratorRuntime.wrap(function expense_delete$(_context11) {
         while (1) {
             switch (_context11.prev = _context11.next) {
                 case 0:
                     _context11.next = 2;
-                    return (0, _effects.all)([watch_login_request(), watch_logout_request(), watch_expenses_request(), watch_expense_submit()]);
+                    return get_access_token();
 
                 case 2:
+                    access_token = _context11.sent;
+                    expense_id = action.expense_id;
+                    _context11.prev = 4;
+
+                    console.log('A');
+                    _context11.next = 8;
+                    return (0, _effects.call)(_api2.default.expense_delete, access_token, expense_id);
+
+                case 8:
+                    expenses = _context11.sent;
+
+                    console.log('B');
+
+                    _context11.next = 12;
+                    return (0, _effects.put)({ type: _reducers.EXPENSES_REQUEST });
+
+                case 12:
+                    _context11.next = 16;
+                    break;
+
+                case 14:
+                    _context11.prev = 14;
+                    _context11.t0 = _context11['catch'](4);
+
+                case 16:
                 case 'end':
                     return _context11.stop();
             }
         }
-    }, _marked[10], this);
+    }, _marked[10], this, [[4, 14]]);
+}
+
+function watch_expense_delete() {
+    return regeneratorRuntime.wrap(function watch_expense_delete$(_context12) {
+        while (1) {
+            switch (_context12.prev = _context12.next) {
+                case 0:
+                    _context12.next = 2;
+                    return (0, _effects.takeEvery)(_reducers.EXPENSE_DELETE, expense_delete);
+
+                case 2:
+                case 'end':
+                    return _context12.stop();
+            }
+        }
+    }, _marked[11], this);
+}
+
+function root_saga() {
+    return regeneratorRuntime.wrap(function root_saga$(_context13) {
+        while (1) {
+            switch (_context13.prev = _context13.next) {
+                case 0:
+                    _context13.next = 2;
+                    return (0, _effects.all)([watch_login_request(), watch_logout_request(), watch_expenses_request(), watch_expense_submit(), watch_expense_delete()]);
+
+                case 2:
+                case 'end':
+                    return _context13.stop();
+            }
+        }
+    }, _marked[12], this);
 }
 
 /***/ }),
@@ -51448,11 +51510,27 @@ function expense_submit(access_token, timestamp, amount, description) {
     });
 }
 
+function expense_delete(access_token, expense_id) {
+    var headers = get_auth_header(access_token);
+
+    return fetch('/api/expense/' + expense_id, {
+        method: 'DELETE',
+        headers: headers
+    }).then(handle_fetch_errors).then(function (response) {
+        return response.json();
+    }).then(function (json) {
+        console.log(json);
+    }).catch(function (error) {
+        console.log(error.message);
+    });
+}
+
 var Api = {
     login_fetch: login_fetch,
     refresh_fetch: refresh_fetch,
     expenses_fetch: expenses_fetch,
-    expense_submit: expense_submit
+    expense_submit: expense_submit,
+    expense_delete: expense_delete
 };
 
 exports.default = Api;
@@ -51583,7 +51661,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _moment = __webpack_require__(1);
+var _moment = __webpack_require__(0);
 
 var _moment2 = _interopRequireDefault(_moment);
 
@@ -51661,6 +51739,11 @@ var ExpenseListView = function (_React$Component) {
             this.props.expense_submit(this.state.timestamp, this.state.amount, this.state.description);
         }
     }, {
+        key: 'handleDeleteExpense',
+        value: function handleDeleteExpense(expense_id) {
+            this.props.expense_delete(expense_id);
+        }
+    }, {
         key: 'handleDescriptionChange',
         value: function handleDescriptionChange(event) {
             event.preventDefault();
@@ -51675,13 +51758,16 @@ var ExpenseListView = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
+            var _this2 = this;
+
             var expense_items = null;
             if (this.props.expenses) {
-                console.log(this.props.expenses);
                 expense_items = this.props.expenses.data.map(function (expense) {
                     return _react2.default.createElement(
                         'li',
-                        { key: expense.id },
+                        { key: expense.id, onClick: function onClick() {
+                                return _this2.handleDeleteExpense(expense.id);
+                            } },
                         expense.id
                     );
                 });
@@ -51690,11 +51776,6 @@ var ExpenseListView = function (_React$Component) {
             return _react2.default.createElement(
                 'div',
                 null,
-                _react2.default.createElement(
-                    'ul',
-                    null,
-                    expense_items
-                ),
                 _react2.default.createElement(
                     'button',
                     { onClick: this.handleClickExpenses },
@@ -51710,6 +51791,11 @@ var ExpenseListView = function (_React$Component) {
                     'button',
                     { onClick: this.handleAddExpense },
                     'Add'
+                ),
+                _react2.default.createElement(
+                    'ul',
+                    null,
+                    expense_items
                 )
             );
         }
@@ -51740,9 +51826,17 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
         });
     };
 
+    var expense_delete = function expense_delete(expense_id) {
+        dispatch({
+            type: 'EXPENSE_DELETE',
+            expense_id: expense_id
+        });
+    };
+
     return {
         expenses_request: expenses_request,
-        expense_submit: expense_submit
+        expense_submit: expense_submit,
+        expense_delete: expense_delete
     };
 };
 

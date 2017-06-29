@@ -41,6 +41,7 @@ export const EXPENSES_REQUEST = 'EXPENSES_REQUEST';
 export const EXPENSES_RECEIVE = 'EXPENSES_RECEIVE';
 export const EXPENSES_FAILED = 'EXPENSES_FAILED';
 export const EXPENSE_SUBMIT = 'EXPENSE_SUBMIT';
+export const EXPENSE_DELETE = 'EXPENSE_DELETE';
 
 const expenses_default_state = {
     data: [],

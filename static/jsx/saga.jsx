@@ -4,16 +4,17 @@ import jwtDecode from 'jwt-decode';
 
 
 import { delay } from 'redux-saga'
-import { select, call, put, takeLatest, all } from 'redux-saga/effects'
+import { select, call, put, takeEvery, takeLatest, all } from 'redux-saga/effects'
 
 import { REFRESH_REQUEST, REFRESH_RECEIVE, REFRESH_FAILED,
     LOGIN_REQUEST, LOGIN_RECEIVE, LOGIN_FAILED,
     LOGOUT_REQUEST, LOGOUT } from './reducers.jsx';
-import { EXPENSES_REQUEST, EXPENSES_RECEIVE,
-    EXPENSES_FAILED, EXPENSE_SUBMIT } from './reducers.jsx';
+import { EXPENSES_REQUEST, EXPENSES_RECEIVE, EXPENSES_FAILED,
+    EXPENSE_SUBMIT, EXPENSE_DELETE } from './reducers.jsx';
 import Api from './api.jsx';
 
 
+// Store selector for authorization - necessary to use token in requests
 const get_auth = (state) => state.auth;
 
 
@@ -113,10 +114,11 @@ function* expense_submit(action) {
     const description = action.description;
 
 	try {
-		const expenses = yield call(Api.expense_submit, access_token,
+		const response = yield call(Api.expense_submit, access_token,
                 timestamp, amount, description);
 
         yield put({type: EXPENSES_REQUEST}); // Don't do this, use return value
+
 		//yield put({type: EXPENSES_RECEIVE, expenses});
 	} catch (e) {
 		//yield put({type: EXPENSES_FAILED, message: e.message});
@@ -129,12 +131,36 @@ export function* watch_expense_submit() {
 }
 
 
+// Expense Delete
+function* expense_delete(action) {
+    const access_token = yield get_access_token();
+    
+    const expense_id = action.expense_id;
+
+	try {
+        console.log('A');
+		const expenses = yield call(Api.expense_delete, access_token, expense_id);
+        console.log('B');
+
+        yield put({type: EXPENSES_REQUEST}); // Don't do this, use return value
+
+		//yield put({type: EXPENSE_DELETE_RECEIVE, expenses});
+	} catch (e) {
+		//yield put({type: EXPENSES_DELETE_FAILED, message: e.message});
+	}
+}
+
+
+export function* watch_expense_delete() {
+    yield takeEvery(EXPENSE_DELETE, expense_delete)
+}
 
 export default function* root_saga() {
     yield all([
         watch_login_request(),
         watch_logout_request(),
         watch_expenses_request(),
-        watch_expense_submit()
+        watch_expense_submit(),
+        watch_expense_delete()
     ])
 }

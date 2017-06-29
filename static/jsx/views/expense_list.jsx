@@ -53,6 +53,10 @@ class ExpenseListView extends React.Component {
         this.props.expense_submit(this.state.timestamp, this.state.amount, this.state.description);
     }
 
+    handleDeleteExpense(expense_id) {
+        this.props.expense_delete(expense_id);
+    }
+
     handleDescriptionChange(event) {
         event.preventDefault();
         this.setState({description: event.target.value});
@@ -66,18 +70,17 @@ class ExpenseListView extends React.Component {
     render() {
         let expense_items = null;
         if (this.props.expenses) {
-            console.log(this.props.expenses);
             expense_items = this.props.expenses.data.map(expense => {
-                return <li key={expense.id}>{expense.id}</li>;
+                return (
+                    <li key={expense.id} onClick={() => this.handleDeleteExpense(expense.id)}>
+                        {expense.id}
+                    </li>
+                );
             });
         }
 
         return (
             <div>
-                <ul>
-                    {expense_items}
-                </ul>
-
                 <button onClick={this.handleClickExpenses}>Get Expenses</button>
                 <br/>
 
@@ -90,6 +93,10 @@ class ExpenseListView extends React.Component {
                     value={this.state.description} placeholder="Description" />
 
                 <button onClick={this.handleAddExpense}>Add</button>
+
+                <ul>
+                    {expense_items}
+                </ul>
             </div>
         );
     }
@@ -118,9 +125,17 @@ const mapDispatchToProps = (dispatch) => {
         });
     };
 
+    const expense_delete = (expense_id) => {
+        dispatch({
+            type: 'EXPENSE_DELETE',
+            expense_id
+        });
+    };
+
     return {
         expenses_request,
-        expense_submit
+        expense_submit,
+        expense_delete
     }; 
 };
 
