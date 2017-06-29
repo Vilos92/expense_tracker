@@ -5,7 +5,8 @@ from utils import DatabaseRetrieveException, DatabaseUpdateException, DatabaseDe
 
 from flask import jsonify, request
 from flask_restful import Resource
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import (create_access_token, create_refresh_token,
+        jwt_required, jwt_refresh_token_required, get_jwt_identity)
 
 from flask_app import app, rest_api
 from flask_app.auth import authenticate_user, get_user
@@ -102,9 +103,25 @@ class Login(Resource):
             error = 'Invalid username or password'
             raise InvalidRequest(error, 401)
         
-        return {'access_token': create_access_token(identity=user.id)}
+        return {
+                'access_token': create_access_token(identity=user.id),
+                'refresh_token': create_refresh_token(identity=user.id)
+                }
 
-rest_api.add_resource(Login, '/api/login')
+rest_api.add_resource(Login, '/auth/login')
+
+@app.route('/refresh', methods=['POST'])
+class Refresh(Resource):
+    method_decorators = [jwt_refresh_token_required]
+
+    def post(self):
+        user = current_user()
+
+        return {
+                'access_token': create_access_token(identity=user.id),
+                }
+
+rest_api.add_resource(Refresh, '/auth/refresh')
 
 
 class Expense(AuthenticatedResource):

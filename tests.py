@@ -112,11 +112,15 @@ class JwtTestUtils(DbTestUtils):
         response = self.client.post(self.LOGIN_URL, content_type='application/json',
                 data=json.dumps(data))
         access_token = response.json['access_token']
+        refresh_token = response.json['refresh_token']
 
-        jwt_token = 'Bearer {}'.format(access_token)
-        headers = {'Authorization': jwt_token}
+        auth_value = 'Bearer {}'.format(access_token)
+        headers = {'Authorization': auth_value}
 
-        return user, headers
+        auth_value = 'Bearer {}'.format(refresh_token)
+        refresh_headers = {'Authorization': auth_value}
+
+        return user, headers, refresh_headers
 
 
 class JwtTest(JwtTestUtils):
@@ -134,6 +138,7 @@ class JwtTest(JwtTestUtils):
         self.assertIsNotNone(response.data)
         self.assertIsNotNone(response.json)
         self.assertIn('access_token', response.json)
+        self.assertIn('refresh_token', response.json)
 
     def test_protected(self):
         with app.test_request_context():
@@ -143,7 +148,7 @@ class JwtTest(JwtTestUtils):
         self.assert_401(response)
         self.assertIsNotNone(response.data)
 
-        user_, headers = self.create_jwt_test_user()
+        user_, headers, refresh_headers_ = self.create_jwt_test_user()
 
         response = self.client.get(protected_url, headers=headers)
         self.assert_200(response)
@@ -153,7 +158,7 @@ class JwtTest(JwtTestUtils):
         with app.test_request_context():
             protected_url = url_for('test_admin_protected')
 
-        user, headers = self.create_jwt_test_user()
+        user, headers, refresh_headers_ = self.create_jwt_test_user()
 
         response = self.client.get(protected_url, headers=headers)
         self.assert_401(response)
@@ -165,6 +170,16 @@ class JwtTest(JwtTestUtils):
         response = self.client.get(protected_url, headers=headers)
         self.assert_200(response)
         self.assertIsNotNone(response.data)
+
+    def test_refresh_token(self):
+        refresh_url = url_for('refresh')
+
+        user, headers, refresh_headers = self.create_jwt_test_user()
+
+        response = self.client.post(refresh_url, content_type='application/json',
+                headers=refresh_headers)
+        self.assert_200(response)
+        self.assertIn('access_token', response.json)
 
 
 class ExpenseTestUtils(JwtTestUtils):
@@ -316,7 +331,7 @@ class ExpenseApiTest(ExpenseTestUtils):
         self.assertIsNotNone(response.data)
 
         # GET - with authentication - no expenses
-        user, headers = self.create_jwt_test_user()
+        user, headers, refresh_headers_ = self.create_jwt_test_user()
         response = self.client.get(self.EXPENSE_LIST_URL, headers=headers)
         self.assert_200(response)
         self.assertIsNotNone(response.json)
@@ -337,8 +352,8 @@ class ExpenseApiTest(ExpenseTestUtils):
         self.assertEqual(len(response_expenses), num_expenses)
 
     def test_expense_get(self):
-        user_1, headers_1 = self.create_jwt_test_user(name='test_user_1')
-        user_2, headers_2 = self.create_jwt_test_user(name='test_user_2')
+        user_1, headers_1, refresh_headers_ = self.create_jwt_test_user(name='test_user_1')
+        user_2, headers_2, refresh_headers_ = self.create_jwt_test_user(name='test_user_2')
 
         # GET  - without authentication
         response = self.client.get(self.get_expense_url(1))
@@ -371,7 +386,7 @@ class ExpenseApiTest(ExpenseTestUtils):
         self.assert_401(response)
 
         # POST - missing data
-        user, headers = self.create_jwt_test_user()
+        user, headers, refresh_headers_ = self.create_jwt_test_user()
         response = self.client.post(self.EXPENSE_LIST_URL, content_type='application/json',
                 headers=headers, data=json.dumps({}))
         self.assert_422(response)
@@ -407,8 +422,8 @@ class ExpenseApiTest(ExpenseTestUtils):
         self.assert_401(response)
         self.assertIsNotNone(response.data)
 
-        user_1, headers_1 = self.create_jwt_test_user(name='test_user_1')
-        user_2, headers_2 = self.create_jwt_test_user(name='test_user_2')
+        user_1, headers_1, refresh_headers_ = self.create_jwt_test_user(name='test_user_1')
+        user_2, headers_2, refresh_headers_ = self.create_jwt_test_user(name='test_user_2')
 
         # PUT - missing data
         expense = self.insert_test_expense(user=user_1)
@@ -454,8 +469,8 @@ class ExpenseApiTest(ExpenseTestUtils):
         self.assert_401(response)
         self.assertIsNotNone(response.data)
 
-        user_1, headers_1 = self.create_jwt_test_user(name='test_user_1')
-        user_2, headers_2 = self.create_jwt_test_user(name='test_user_2')
+        user_1, headers_1, refresh_headers_ = self.create_jwt_test_user(name='test_user_1')
+        user_2, headers_2, refresh_headers_ = self.create_jwt_test_user(name='test_user_2')
 
         # DELETE - with authentication, but wrong user
         expense = self.insert_test_expense(user=user_1)
@@ -485,7 +500,7 @@ class ExpenseApiTest(ExpenseTestUtils):
 
 class ReportTest(ExpenseTestUtils):
     def test_get_report(self):
-        user, headers = self.create_jwt_test_user()
+        user, headers, refresh_headers_ = self.create_jwt_test_user()
 
         # Get report for user which does not exist
         report = get_report(1)
@@ -506,7 +521,7 @@ class ReportTest(ExpenseTestUtils):
         self.assertEqual(len(report_expenses), num_expenses)
 
     def test_get_report_filter_after(self):
-        user, headers = self.create_jwt_test_user()
+        user, headers, refresh_headers_ = self.create_jwt_test_user()
         cutoff_dt = pendulum.now()
 
         # Get report for user after date - none
@@ -526,7 +541,7 @@ class ReportTest(ExpenseTestUtils):
         self.assertEqual(len(report_expenses), num_expenses)
 
     def test_get_report_filter_before(self):
-        user, headers = self.create_jwt_test_user()
+        user, headers, refresh_headers_ = self.create_jwt_test_user()
         cutoff_dt = pendulum.now()
 
         # Get report for user before date - none
@@ -546,7 +561,7 @@ class ReportTest(ExpenseTestUtils):
         self.assertEqual(len(report_expenses), num_expenses)
 
     def test_get_report_filter_between(self):
-        user, headers = self.create_jwt_test_user()
+        user, headers, refresh_headers_ = self.create_jwt_test_user()
 
         now = pendulum.now()
         start_dt = now.subtract(days=1)
