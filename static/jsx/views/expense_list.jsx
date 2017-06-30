@@ -3,6 +3,9 @@ import moment from 'moment';
 import React from 'react';
 import { connect } from 'react-redux';
 
+import Panel from '~/components/panel.jsx';
+import { FoundationButton } from '~/components/foundation.jsx';
+
 
 class ExpenseListView extends React.Component {
     constructor(props) {
@@ -16,7 +19,6 @@ class ExpenseListView extends React.Component {
             description: ''
         }
 
-        this.handleClickExpenses = this.handleClickExpenses.bind(this);
         this.handleDateChange = this.handleDateChange.bind(this);
         this.handleAmountChange = this.handleAmountChange.bind(this);
         this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
@@ -24,10 +26,6 @@ class ExpenseListView extends React.Component {
     }
 
     componentWillMount() {
-        this.props.expenses_request();
-    }
-
-    handleClickExpenses() {
         this.props.expenses_request();
     }
 
@@ -71,19 +69,17 @@ class ExpenseListView extends React.Component {
         let expense_items = null;
         if (this.props.expenses) {
             expense_items = this.props.expenses.data.map(expense => {
+                const dt = moment(expense.timestamp);
                 return (
-                    <li key={expense.id} onClick={() => this.handleDeleteExpense(expense.id)}>
-                        {expense.id}
-                    </li>
+                    <Panel key={expense.id} onClick={() => this.handleDeleteExpense(expense.id)}>
+                        {expense.id} | {dt.format()} | {expense.amount} | {expense.description}
+                    </Panel>
                 );
             });
         }
 
         return (
             <div>
-                <button onClick={this.handleClickExpenses}>Get Expenses</button>
-                <br/>
-
                 <input onChange={this.handleDateChange} type="datetime-local" value={this.state.timestamp} />
 
                 <input onChange={this.handleAmountChange} type="number" 
@@ -92,11 +88,12 @@ class ExpenseListView extends React.Component {
                 <input onChange={this.handleDescriptionChange} type="text" 
                     value={this.state.description} placeholder="Description" />
 
-                <button onClick={this.handleAddExpense}>Add</button>
+                <FoundationButton onClick={this.handleAddExpense}
+                                large={true} expanded={true}>
+                    Add Expense
+                </FoundationButton>
 
-                <ul>
-                    {expense_items}
-                </ul>
+                {expense_items}
             </div>
         );
     }

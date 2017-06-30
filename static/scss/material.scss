@@ -1,0 +1,21 @@
+$material-drop-shadow-extra-small: 0 1px 4px rgba(0, 0, 0, .6);
+$material-drop-shadow-small: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+$material-drop-shadow-medium: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+$material-drop-shadow-large: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+
+$material-transition-time: 0.2s;
+                                                                                                         
+
+%material-edgeless {
+    border-width: 0;
+    outline: none;
+}
+
+%material-border-radius {
+    border-radius: 2px;
+}
+
+%material-basic {
+    @extend %material-edgeless;
+    @extend %material-border-radius;
+}

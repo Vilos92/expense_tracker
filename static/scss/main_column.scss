@@ -1,0 +1,20 @@
+@import 'colors.scss';
+@import 'material.scss';
+
+
+$main-background: $color-creamy-white;
+$main-drop-shadow: $material-drop-shadow-large;
+
+
+.main-column {
+    @extend %material-basic;
+
+    background-color: $main-background;
+
+    padding: 2em;
+
+    margin-top: 2em;
+    margin-bottom: 2em;
+
+    box-shadow: $main-drop-shadow;
+}

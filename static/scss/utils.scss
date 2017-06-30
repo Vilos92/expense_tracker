@@ -1,0 +1,63 @@
+// Mixin for applying colors to links
+@mixin link-colors($link, $visit, $hover, $active) {
+    a {
+        color: $link;
+
+        &:visited {
+            color: $visit;
+        }
+
+        &:hover {
+            color: $hover;   
+        }
+
+        &:active {
+            color: $active;
+        }
+    }
+}
+
+
+// Font size modifiers
+.font-lg {
+    font-size: 1.5em;
+}
+
+.font-2x {
+    font-size: 2em;
+}
+
+.font-3x {
+    font-size: 3em;
+}
+
+.font-4x {
+    font-size: 4em;
+}
+
+.font-5x {
+    font-size: 5em;
+}
+
+
+.no-spinners {
+    -moz-appearance:textfield;
+}
+
+.no-spinners::-webkit-outer-spin-button, .no-spinners::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+
+.float-right {
+    float: right;
+}
+
+.clear {
+    clear: both;
+}
+
+.capitalize {
+    text-transform: capitalize;
+}

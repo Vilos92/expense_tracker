@@ -1,0 +1,58 @@
+@import 'colors.scss';
+@import 'fonts.scss';
+@import 'material.scss';
+
+
+$button-background: $color-primary;
+$button-hover-background: $color-primary-alt;
+$button-success-background: $color-success;
+$button-success-hover-background: $color-success-hover;
+$button-secondary-background: $color-secondary;
+$button-secondary-hover-background: $color-secondary-hover;
+$button-alert-background: $color-alert;
+$button-alert-hover-background: $color-alert-hover;
+
+$button-drop-shadow: $material-drop-shadow-extra-small;
+
+
+@mixin button-colors($color, $background, $hover-background) {
+    color: $color;
+    background-color: $background;
+
+    &:hover, &:focus {
+        color: $color;
+        background-color: $hover-background;
+    }
+}
+
+
+.button {
+    @extend %material-edgeless;
+    @extend %material-border-radius;
+    @include button-colors($color-titanium-white, $button-background,
+        $button-hover-background);
+
+    font-family: $button-font;
+    font-weight: bold;
+    text-transform: uppercase;
+
+    transition: background-color $material-transition-time;
+
+    box-shadow: $button-drop-shadow;
+}
+
+
+.button.success {
+    @include button-colors($color-titanium-white, $button-success-background,
+        $button-success-hover-background);
+}
+
+.button.secondary {
+    @include button-colors($color-pitch-black, $button-secondary-background,
+        $button-secondary-hover-background);
+}
+
+.button.alert {
+    @include button-colors($color-titanium-white, $button-alert-background,
+        $button-alert-hover-background);
+}

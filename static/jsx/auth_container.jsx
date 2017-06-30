@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { FoundationButton } from './components/foundation.jsx';
+
 
 class AuthContainer extends React.Component {
     constructor(props) {
@@ -18,7 +20,10 @@ class AuthContainer extends React.Component {
             return (
                 <div>
                     Must retrieve access token!
-                    <button onClick={this.handleClickLogin}>Login</button>
+                    <FoundationButton onClick={this.handleClickLogin}
+                                    large={true} expanded={true}>
+                        Login
+                    </FoundationButton>
                 </div>
             );
         }
@@ -30,8 +35,12 @@ class AuthContainer extends React.Component {
 
         return (
             <div>
-                <button onClick={this.props.logout}>Logout</button>
                 {auth_children}
+
+                <FoundationButton onClick={this.props.logout}
+                                large={true} expanded={true}>
+                    Logout
+                </FoundationButton>
             </div>
         );
     }

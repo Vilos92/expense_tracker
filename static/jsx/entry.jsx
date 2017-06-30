@@ -1,3 +1,10 @@
+import normalize_style from '~/../css/normalize.css';
+import foundation_style from '~/../css/foundation.min.css';
+
+import style from '~/../scss/style.scss';
+import main_column_style from '~/../scss/main_column.scss';
+
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 
@@ -32,12 +39,29 @@ const store = createStore(
 sagaMiddleware.run(root_saga);
 
 
+export function MainColumn(props) {
+    return (
+        <div className="small-8 small-centered columns">
+            <div className="main-column">
+                <h1>Expense Tracker</h1>
+
+                {props.children}
+            </div>
+        </div>
+    );  
+}
+
+
+                //<ReportView />
+
+
 ReactDOM.render((
         <Provider store={store}>
-            <ReduxAuthContainer>
-                <ReduxExpenseListView />
-                <ReportView />
-            </ReduxAuthContainer>
+            <MainColumn>
+                <ReduxAuthContainer>
+                    <ReduxExpenseListView />
+                </ReduxAuthContainer>
+            </MainColumn>
         </Provider>
     )   
     ,   

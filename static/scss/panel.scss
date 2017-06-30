@@ -1,0 +1,20 @@
+@import 'colors.scss';
+@import 'material.scss';
+
+
+$panel-background: $color-titanium-white;
+$panel-drop-shadow: $material-drop-shadow-small;
+
+
+.panel {
+    @extend %material-basic;
+
+    display: block;
+
+    background-color: $color-titanium-white;
+
+    padding: 1.5em;
+    margin-bottom: 1em;
+
+    box-shadow: $panel-drop-shadow;
+}

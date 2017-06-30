@@ -1,3 +1,6 @@
+import moment from 'moment';
+
+
 function handle_fetch_errors(response) {
     if (!response.ok) {
         throw Error(response.statusText);
@@ -87,8 +90,12 @@ function expense_submit(access_token, timestamp, amount, description) {
         'Content-Type': 'application/json'
     };
 
+    // Attach timezome to timestamp
+    const dt = moment(timestamp);
+    const timestamp_with_tz = dt.utc().format();
+
     const body = {
-        timestamp,
+        timestamp: timestamp_with_tz,
         amount,
         description
     };

@@ -1,0 +1,37 @@
+// Color Definitions
+$color-grass-green: #00B25C;
+$color-leaf-green: #229955;
+
+$color-azure-blue: #229999;
+$color-turquoise-blue: #3F7E7F;
+
+$color-pig-pink: #DDAAAA;
+$color-amber-red: #775555;
+
+$color-titanium-white: #FFFFFF;
+$color-creamy-white: #F7F7F7;
+
+$color-pitch-black: #000000;
+$color-kinda-gray: #E6E6E6;
+
+
+// Dominant Color Assignments
+$color-primary: $color-azure-blue;
+$color-primary: #5C9EAD;
+$color-primary-alt: $color-turquoise-blue;
+
+
+// Context Color Assignments
+$color-success: $color-grass-green;
+$color-success-hover: $color-leaf-green;
+$color-secondary: $color-creamy-white;
+$color-secondary-hover: $color-kinda-gray;
+$color-alert: $color-pig-pink;
+$color-alert-hover: $color-amber-red;
+
+
+// General Color Assignments
+$body-background: #7BB2D9;
+
+$link-color: #5C9EAD;
+$link-hover-color: $color-turquoise-blue;

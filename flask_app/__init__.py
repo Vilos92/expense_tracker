@@ -15,11 +15,9 @@ config_type = os.environ.get('FLASK_CONFIG', ConfigTypes.DEVELOPMENT)
 if config_type not in ConfigTypes:
     config_type = ConfigTypes.DEVELOPMENT
 
+
 config_path = 'config.{}Config'.format(config_type)
 app.config.from_object(config_path)
-
-app_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-app.static_folder = os.path.join(app_directory, 'static')
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -33,9 +31,14 @@ from flask_app import views, api, models
 from flask_app.api import admin_required
 
 
-# If testing, add JWT test routes
-config_type = os.environ.get('FLASK_CONFIG', None)
-if config_type == ConfigTypes.TESTING:
+# Only set a static path when in development
+if config_type == ConfigTypes.DEVELOPMENT:
+    app_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    app.static_folder = os.path.join(app_directory, 'static')
+
+
+# If testing, include JWT test routes
+elif config_type == ConfigTypes.TESTING:
     @app.route('/test/protected')
     @jwt_required
     def test_protected():
