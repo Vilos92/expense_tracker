@@ -7,6 +7,38 @@ import Panel from '~/components/panel.jsx';
 import { FoundationButton } from '~/components/foundation.jsx';
 
 
+class ExpenseItem extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.handleDeleteExpense = this.handleDeleteExpense.bind(this);
+    }
+
+    handleDeleteExpense() {
+        const expense_id = this.props.expense.id;
+
+        console.log(expense_id);
+        this.props.expense_delete(expense_id);
+    }
+
+    render() {
+        const expense = this.props.expense;
+
+        const dt = moment(expense.timestamp);
+
+        const delete_button = (
+            <FoundationButton onClick={this.handleDeleteExpense}>Delete</FoundationButton>
+        );
+
+        return (
+            <Panel key={expense.id} onClick={this.handleDeleteExpense}>
+                {dt.format()} | {expense.amount} | {expense.description} | {delete_button}
+            </Panel>
+        );
+    }
+}
+
+
 class ExpenseListView extends React.Component {
     constructor(props) {
         super(props);
@@ -51,10 +83,6 @@ class ExpenseListView extends React.Component {
         this.props.expense_submit(this.state.timestamp, this.state.amount, this.state.description);
     }
 
-    handleDeleteExpense(expense_id) {
-        this.props.expense_delete(expense_id);
-    }
-
     handleDescriptionChange(event) {
         event.preventDefault();
         this.setState({description: event.target.value});
@@ -70,10 +98,10 @@ class ExpenseListView extends React.Component {
         if (this.props.expenses) {
             expense_items = this.props.expenses.data.map(expense => {
                 const dt = moment(expense.timestamp);
+
                 return (
-                    <Panel key={expense.id} onClick={() => this.handleDeleteExpense(expense.id)}>
-                        {expense.id} | {dt.format()} | {expense.amount} | {expense.description}
-                    </Panel>
+                    <ExpenseItem key={expense.id} expense={expense} 
+                        expense_delete={this.props.expense_delete} />
                 );
             });
         }

@@ -51893,7 +51893,6 @@ var AuthContainer = function (_React$Component) {
                 return _react2.default.createElement(
                     'div',
                     null,
-                    'Must retrieve access token!',
                     _react2.default.createElement(
                         _foundation.FoundationButton,
                         { onClick: this.handleClickLogin,
@@ -51911,13 +51910,13 @@ var AuthContainer = function (_React$Component) {
             return _react2.default.createElement(
                 'div',
                 null,
-                auth_children,
                 _react2.default.createElement(
                     _foundation.FoundationButton,
                     { onClick: this.props.logout,
                         large: true, expanded: true },
                     'Logout'
-                )
+                ),
+                auth_children
             );
         }
     }]);
@@ -52004,27 +52003,77 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var ExpenseListView = function (_React$Component) {
-    _inherits(ExpenseListView, _React$Component);
+var ExpenseItem = function (_React$Component) {
+    _inherits(ExpenseItem, _React$Component);
+
+    function ExpenseItem(props) {
+        _classCallCheck(this, ExpenseItem);
+
+        var _this = _possibleConstructorReturn(this, (ExpenseItem.__proto__ || Object.getPrototypeOf(ExpenseItem)).call(this, props));
+
+        _this.handleDeleteExpense = _this.handleDeleteExpense.bind(_this);
+        return _this;
+    }
+
+    _createClass(ExpenseItem, [{
+        key: 'handleDeleteExpense',
+        value: function handleDeleteExpense() {
+            var expense_id = this.props.expense.id;
+
+            console.log(expense_id);
+            this.props.expense_delete(expense_id);
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var expense = this.props.expense;
+
+            var dt = (0, _moment2.default)(expense.timestamp);
+
+            var delete_button = _react2.default.createElement(
+                _foundation.FoundationButton,
+                { onClick: this.handleDeleteExpense },
+                'Delete'
+            );
+
+            return _react2.default.createElement(
+                _panel2.default,
+                { key: expense.id, onClick: this.handleDeleteExpense },
+                dt.format(),
+                ' | ',
+                expense.amount,
+                ' | ',
+                expense.description,
+                ' | ',
+                delete_button
+            );
+        }
+    }]);
+
+    return ExpenseItem;
+}(_react2.default.Component);
+
+var ExpenseListView = function (_React$Component2) {
+    _inherits(ExpenseListView, _React$Component2);
 
     function ExpenseListView(props) {
         _classCallCheck(this, ExpenseListView);
 
-        var _this = _possibleConstructorReturn(this, (ExpenseListView.__proto__ || Object.getPrototypeOf(ExpenseListView)).call(this, props));
+        var _this2 = _possibleConstructorReturn(this, (ExpenseListView.__proto__ || Object.getPrototypeOf(ExpenseListView)).call(this, props));
 
         var timestamp = (0, _moment2.default)().format('YYYY-MM-DDTHH:mm:ss');
 
-        _this.state = {
+        _this2.state = {
             timestamp: timestamp,
             amount: 0.00,
             description: ''
         };
 
-        _this.handleDateChange = _this.handleDateChange.bind(_this);
-        _this.handleAmountChange = _this.handleAmountChange.bind(_this);
-        _this.handleDescriptionChange = _this.handleDescriptionChange.bind(_this);
-        _this.handleAddExpense = _this.handleAddExpense.bind(_this);
-        return _this;
+        _this2.handleDateChange = _this2.handleDateChange.bind(_this2);
+        _this2.handleAmountChange = _this2.handleAmountChange.bind(_this2);
+        _this2.handleDescriptionChange = _this2.handleDescriptionChange.bind(_this2);
+        _this2.handleAddExpense = _this2.handleAddExpense.bind(_this2);
+        return _this2;
     }
 
     _createClass(ExpenseListView, [{
@@ -52058,11 +52107,6 @@ var ExpenseListView = function (_React$Component) {
             this.props.expense_submit(this.state.timestamp, this.state.amount, this.state.description);
         }
     }, {
-        key: 'handleDeleteExpense',
-        value: function handleDeleteExpense(expense_id) {
-            this.props.expense_delete(expense_id);
-        }
-    }, {
         key: 'handleDescriptionChange',
         value: function handleDescriptionChange(event) {
             event.preventDefault();
@@ -52077,25 +52121,15 @@ var ExpenseListView = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
-            var _this2 = this;
+            var _this3 = this;
 
             var expense_items = null;
             if (this.props.expenses) {
                 expense_items = this.props.expenses.data.map(function (expense) {
                     var dt = (0, _moment2.default)(expense.timestamp);
-                    return _react2.default.createElement(
-                        _panel2.default,
-                        { key: expense.id, onClick: function onClick() {
-                                return _this2.handleDeleteExpense(expense.id);
-                            } },
-                        expense.id,
-                        ' | ',
-                        dt.format(),
-                        ' | ',
-                        expense.amount,
-                        ' | ',
-                        expense.description
-                    );
+
+                    return _react2.default.createElement(ExpenseItem, { key: expense.id, expense: expense,
+                        expense_delete: _this3.props.expense_delete });
                 });
             }
 
