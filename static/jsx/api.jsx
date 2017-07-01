@@ -42,6 +42,33 @@ function login_fetch(username, password) {
 }
 
 
+function register_fetch(username, password) {
+    const body = {
+        username,
+        password
+    };
+
+    return fetch('/auth/register', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body)
+    })
+    .then(handle_fetch_errors)
+    .then(response => response.json())
+    .then(json => {
+        const access_token = json.access_token;
+        const refresh_token = json.refresh_token;
+
+        return [access_token, refresh_token]
+    }).
+    catch(error => {
+        console.log(error.message);
+    });
+}
+
+
 function refresh_fetch(refresh_token) {
     const headers = get_auth_header(refresh_token);
 
@@ -224,6 +251,7 @@ function report_fetch(access_token, start_date, end_date) {
 
 
 const Api = {
+    register_fetch,
     login_fetch,
     refresh_fetch,
     expenses_fetch,

@@ -7,7 +7,7 @@ import { delay } from 'redux-saga'
 import { select, call, put, takeEvery, takeLatest, all } from 'redux-saga/effects'
 
 import { REFRESH_REQUEST, REFRESH_RECEIVE, REFRESH_FAILED,
-    LOGIN_REQUEST, LOGIN_RECEIVE, LOGIN_FAILED,
+    REGISTER_REQUEST, LOGIN_REQUEST, LOGIN_RECEIVE, LOGIN_FAILED,
     LOGOUT_REQUEST, LOGOUT } from './reducers.jsx';
 
 import { EXPENSES_REQUEST, EXPENSES_RECEIVE, EXPENSES_FAILED,
@@ -21,6 +21,25 @@ import Api from './api.jsx';
 
 // Store selector for authorization - necessary to use token in requests
 const get_auth = (state) => state.auth;
+
+
+// Auth - Register
+function* register_fetch(action) {
+	try {
+		const auth = yield call(Api.register_fetch, action.username, action.password);
+        const access_token = auth[0];
+        const refresh_token = auth[1]
+
+		yield put({type: LOGIN_RECEIVE, access_token, refresh_token});
+	} catch (e) {
+		yield put({type: LOGIN_FAILED, message: e.message});
+	}
+}
+
+
+export function* watch_register_request() {
+    yield takeLatest(REGISTER_REQUEST, register_fetch)
+}
 
 
 // Auth - Login
@@ -231,6 +250,7 @@ export function* watch_report_request() {
 // Combined Saga reducer
 export default function* root_saga() {
     yield all([
+        watch_register_request(),
         watch_login_request(),
         watch_logout_request(),
         watch_expenses_request(),

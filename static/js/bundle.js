@@ -23581,7 +23581,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.REPORT_FAILED = exports.REPORT_RECEIVE = exports.REPORT_REQUEST = exports.EXPENSE_DELETE = exports.EXPENSE_UPDATE = exports.EXPENSE_SUBMIT = exports.EXPENSE_FAILED = exports.EXPENSE_RECEIVE = exports.EXPENSE_REQUEST = exports.EXPENSES_FAILED = exports.EXPENSES_RECEIVE = exports.EXPENSES_REQUEST = exports.LOGOUT = exports.LOGOUT_REQUEST = exports.LOGIN_FAILED = exports.LOGIN_RECEIVE = exports.LOGIN_REQUEST = exports.REFRESH_FAILED = exports.REFRESH_RECEIVE = exports.REFRESH_REQUEST = undefined;
+exports.REPORT_FAILED = exports.REPORT_RECEIVE = exports.REPORT_REQUEST = exports.EXPENSE_DELETE = exports.EXPENSE_UPDATE = exports.EXPENSE_SUBMIT = exports.EXPENSE_FAILED = exports.EXPENSE_RECEIVE = exports.EXPENSE_REQUEST = exports.EXPENSES_FAILED = exports.EXPENSES_RECEIVE = exports.EXPENSES_REQUEST = exports.LOGOUT = exports.LOGOUT_REQUEST = exports.LOGIN_FAILED = exports.LOGIN_RECEIVE = exports.LOGIN_REQUEST = exports.REGISTER_REQUEST = exports.REFRESH_FAILED = exports.REFRESH_RECEIVE = exports.REFRESH_REQUEST = undefined;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
@@ -23594,6 +23594,8 @@ var _redux = __webpack_require__(150);
 var REFRESH_REQUEST = exports.REFRESH_REQUEST = 'REFRESH_REQUEST';
 var REFRESH_RECEIVE = exports.REFRESH_RECEIVE = 'REFRESH_RECEIVE';
 var REFRESH_FAILED = exports.REFRESH_FAILED = 'REFRESH_FAILED';
+
+var REGISTER_REQUEST = exports.REGISTER_REQUEST = 'REGISTER_REQUEST';
 
 var LOGIN_REQUEST = exports.LOGIN_REQUEST = 'LOGIN_REQUEST';
 var LOGIN_RECEIVE = exports.LOGIN_RECEIVE = 'LOGIN_RECEIVE';
@@ -52604,6 +52606,7 @@ function sagaMiddlewareFactory() {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.watch_register_request = watch_register_request;
 exports.watch_login_request = watch_login_request;
 exports.get_access_token = get_access_token;
 exports.watch_logout_request = watch_logout_request;
@@ -52635,23 +52638,23 @@ var _api2 = _interopRequireDefault(_api);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var _marked = [login_fetch, watch_login_request, refresh_fetch, get_access_token, logout, watch_logout_request, expenses_fetch, watch_expenses_request, expense_fetch, watch_expense_request, expense_submit, watch_expense_submit, expense_update, watch_expense_update, expense_delete, watch_expense_delete, report_fetch, watch_report_request, root_saga].map(regeneratorRuntime.mark);
+var _marked = [register_fetch, watch_register_request, login_fetch, watch_login_request, refresh_fetch, get_access_token, logout, watch_logout_request, expenses_fetch, watch_expenses_request, expense_fetch, watch_expense_request, expense_submit, watch_expense_submit, expense_update, watch_expense_update, expense_delete, watch_expense_delete, report_fetch, watch_report_request, root_saga].map(regeneratorRuntime.mark);
 
 // Store selector for authorization - necessary to use token in requests
 var get_auth = function get_auth(state) {
   return state.auth;
 };
 
-// Auth - Login
-function login_fetch(action) {
+// Auth - Register
+function register_fetch(action) {
   var auth, access_token, refresh_token;
-  return regeneratorRuntime.wrap(function login_fetch$(_context) {
+  return regeneratorRuntime.wrap(function register_fetch$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
           _context.prev = 0;
           _context.next = 3;
-          return (0, _effects.call)(_api2.default.login_fetch, action.username, action.password);
+          return (0, _effects.call)(_api2.default.register_fetch, action.username, action.password);
 
         case 3:
           auth = _context.sent;
@@ -52678,13 +52681,13 @@ function login_fetch(action) {
   }, _marked[0], this, [[0, 10]]);
 }
 
-function watch_login_request() {
-  return regeneratorRuntime.wrap(function watch_login_request$(_context2) {
+function watch_register_request() {
+  return regeneratorRuntime.wrap(function watch_register_request$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
         case 0:
           _context2.next = 2;
-          return (0, _effects.takeLatest)(_reducers.LOGIN_REQUEST, login_fetch);
+          return (0, _effects.takeLatest)(_reducers.REGISTER_REQUEST, register_fetch);
 
         case 2:
         case 'end':
@@ -52694,85 +52697,51 @@ function watch_login_request() {
   }, _marked[1], this);
 }
 
-// Auth - Refresh
-function refresh_fetch() {
-  var auth, refresh_token, access_token;
-  return regeneratorRuntime.wrap(function refresh_fetch$(_context3) {
+// Auth - Login
+function login_fetch(action) {
+  var auth, access_token, refresh_token;
+  return regeneratorRuntime.wrap(function login_fetch$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
         case 0:
           _context3.prev = 0;
           _context3.next = 3;
-          return (0, _effects.select)(get_auth);
+          return (0, _effects.call)(_api2.default.login_fetch, action.username, action.password);
 
         case 3:
           auth = _context3.sent;
-          refresh_token = auth.refresh_token;
-          _context3.next = 7;
-          return (0, _effects.call)(_api2.default.refresh_fetch, refresh_token);
+          access_token = auth[0];
+          refresh_token = auth[1];
+          _context3.next = 8;
+          return (0, _effects.put)({ type: _reducers.LOGIN_RECEIVE, access_token: access_token, refresh_token: refresh_token });
 
-        case 7:
-          access_token = _context3.sent;
-          _context3.next = 10;
-          return (0, _effects.put)({ type: _reducers.REFRESH_RECEIVE, access_token: access_token });
-
-        case 10:
-          _context3.next = 16;
+        case 8:
+          _context3.next = 14;
           break;
 
-        case 12:
-          _context3.prev = 12;
+        case 10:
+          _context3.prev = 10;
           _context3.t0 = _context3['catch'](0);
-          _context3.next = 16;
-          return (0, _effects.put)({ type: _reducers.REFRESH_FAILED, message: _context3.t0.message });
+          _context3.next = 14;
+          return (0, _effects.put)({ type: _reducers.LOGIN_FAILED, message: _context3.t0.message });
 
-        case 16:
+        case 14:
         case 'end':
           return _context3.stop();
       }
     }
-  }, _marked[2], this, [[0, 12]]);
+  }, _marked[2], this, [[0, 10]]);
 }
 
-// Auth - Retrieve (and refresh if necessary) access token
-function get_access_token() {
-  var auth, access_token, decoded, expires, expires_moment, time_until_exp;
-  return regeneratorRuntime.wrap(function get_access_token$(_context4) {
+function watch_login_request() {
+  return regeneratorRuntime.wrap(function watch_login_request$(_context4) {
     while (1) {
       switch (_context4.prev = _context4.next) {
         case 0:
           _context4.next = 2;
-          return (0, _effects.select)(get_auth);
+          return (0, _effects.takeLatest)(_reducers.LOGIN_REQUEST, login_fetch);
 
         case 2:
-          auth = _context4.sent;
-          access_token = auth.access_token;
-          decoded = (0, _jwtDecode2.default)(access_token);
-          expires = decoded.exp;
-          expires_moment = _moment2.default.unix(expires);
-          time_until_exp = expires_moment.diff((0, _moment2.default)(), 'seconds');
-
-          if (!(time_until_exp <= 60)) {
-            _context4.next = 15;
-            break;
-          }
-
-          _context4.next = 11;
-          return (0, _effects.call)(refresh_fetch);
-
-        case 11:
-          _context4.next = 13;
-          return (0, _effects.select)(get_auth);
-
-        case 13:
-          auth = _context4.sent;
-
-          access_token = auth.access_token;
-
-        case 15:
-          return _context4.abrupt('return', access_token);
-
-        case 16:
         case 'end':
           return _context4.stop();
       }
@@ -52780,33 +52749,85 @@ function get_access_token() {
   }, _marked[3], this);
 }
 
-// Auth - Logout - Can probably just make plain action for this
-function logout(action) {
-  return regeneratorRuntime.wrap(function logout$(_context5) {
+// Auth - Refresh
+function refresh_fetch() {
+  var auth, refresh_token, access_token;
+  return regeneratorRuntime.wrap(function refresh_fetch$(_context5) {
     while (1) {
       switch (_context5.prev = _context5.next) {
         case 0:
-          _context5.next = 2;
-          return (0, _effects.put)({ type: _reducers.LOGOUT });
+          _context5.prev = 0;
+          _context5.next = 3;
+          return (0, _effects.select)(get_auth);
 
-        case 2:
+        case 3:
+          auth = _context5.sent;
+          refresh_token = auth.refresh_token;
+          _context5.next = 7;
+          return (0, _effects.call)(_api2.default.refresh_fetch, refresh_token);
+
+        case 7:
+          access_token = _context5.sent;
+          _context5.next = 10;
+          return (0, _effects.put)({ type: _reducers.REFRESH_RECEIVE, access_token: access_token });
+
+        case 10:
+          _context5.next = 16;
+          break;
+
+        case 12:
+          _context5.prev = 12;
+          _context5.t0 = _context5['catch'](0);
+          _context5.next = 16;
+          return (0, _effects.put)({ type: _reducers.REFRESH_FAILED, message: _context5.t0.message });
+
+        case 16:
         case 'end':
           return _context5.stop();
       }
     }
-  }, _marked[4], this);
+  }, _marked[4], this, [[0, 12]]);
 }
 
-// Yeah, plain action
-function watch_logout_request() {
-  return regeneratorRuntime.wrap(function watch_logout_request$(_context6) {
+// Auth - Retrieve (and refresh if necessary) access token
+function get_access_token() {
+  var auth, access_token, decoded, expires, expires_moment, time_until_exp;
+  return regeneratorRuntime.wrap(function get_access_token$(_context6) {
     while (1) {
       switch (_context6.prev = _context6.next) {
         case 0:
           _context6.next = 2;
-          return (0, _effects.takeLatest)(_reducers.LOGOUT_REQUEST, logout);
+          return (0, _effects.select)(get_auth);
 
         case 2:
+          auth = _context6.sent;
+          access_token = auth.access_token;
+          decoded = (0, _jwtDecode2.default)(access_token);
+          expires = decoded.exp;
+          expires_moment = _moment2.default.unix(expires);
+          time_until_exp = expires_moment.diff((0, _moment2.default)(), 'seconds');
+
+          if (!(time_until_exp <= 60)) {
+            _context6.next = 15;
+            break;
+          }
+
+          _context6.next = 11;
+          return (0, _effects.call)(refresh_fetch);
+
+        case 11:
+          _context6.next = 13;
+          return (0, _effects.select)(get_auth);
+
+        case 13:
+          auth = _context6.sent;
+
+          access_token = auth.access_token;
+
+        case 15:
+          return _context6.abrupt('return', access_token);
+
+        case 16:
         case 'end':
           return _context6.stop();
       }
@@ -52814,52 +52835,31 @@ function watch_logout_request() {
   }, _marked[5], this);
 }
 
-// Expenses
-function expenses_fetch(action) {
-  var access_token, expenses;
-  return regeneratorRuntime.wrap(function expenses_fetch$(_context7) {
+// Auth - Logout - Can probably just make plain action for this
+function logout(action) {
+  return regeneratorRuntime.wrap(function logout$(_context7) {
     while (1) {
       switch (_context7.prev = _context7.next) {
         case 0:
           _context7.next = 2;
-          return get_access_token();
+          return (0, _effects.put)({ type: _reducers.LOGOUT });
 
         case 2:
-          access_token = _context7.sent;
-          _context7.prev = 3;
-          _context7.next = 6;
-          return (0, _effects.call)(_api2.default.expenses_fetch, access_token);
-
-        case 6:
-          expenses = _context7.sent;
-          _context7.next = 9;
-          return (0, _effects.put)({ type: _reducers.EXPENSES_RECEIVE, expenses: expenses });
-
-        case 9:
-          _context7.next = 15;
-          break;
-
-        case 11:
-          _context7.prev = 11;
-          _context7.t0 = _context7['catch'](3);
-          _context7.next = 15;
-          return (0, _effects.put)({ type: _reducers.EXPENSES_FAILED, message: _context7.t0.message });
-
-        case 15:
         case 'end':
           return _context7.stop();
       }
     }
-  }, _marked[6], this, [[3, 11]]);
+  }, _marked[6], this);
 }
 
-function watch_expenses_request() {
-  return regeneratorRuntime.wrap(function watch_expenses_request$(_context8) {
+// Yeah, plain action
+function watch_logout_request() {
+  return regeneratorRuntime.wrap(function watch_logout_request$(_context8) {
     while (1) {
       switch (_context8.prev = _context8.next) {
         case 0:
           _context8.next = 2;
-          return (0, _effects.takeLatest)(_reducers.EXPENSES_REQUEST, expenses_fetch);
+          return (0, _effects.takeLatest)(_reducers.LOGOUT_REQUEST, logout);
 
         case 2:
         case 'end':
@@ -52869,10 +52869,10 @@ function watch_expenses_request() {
   }, _marked[7], this);
 }
 
-// Expense
-function expense_fetch(action) {
-  var access_token, expense_id, expense;
-  return regeneratorRuntime.wrap(function expense_fetch$(_context9) {
+// Expenses
+function expenses_fetch(action) {
+  var access_token, expenses;
+  return regeneratorRuntime.wrap(function expenses_fetch$(_context9) {
     while (1) {
       switch (_context9.prev = _context9.next) {
         case 0:
@@ -52881,41 +52881,40 @@ function expense_fetch(action) {
 
         case 2:
           access_token = _context9.sent;
-          expense_id = action.expense_id;
-          _context9.prev = 4;
-          _context9.next = 7;
-          return (0, _effects.call)(_api2.default.expense_fetch, access_token, expense_id);
+          _context9.prev = 3;
+          _context9.next = 6;
+          return (0, _effects.call)(_api2.default.expenses_fetch, access_token);
 
-        case 7:
-          expense = _context9.sent;
-          _context9.next = 10;
-          return (0, _effects.put)({ type: _reducers.EXPENSE_RECEIVE, expense: expense });
+        case 6:
+          expenses = _context9.sent;
+          _context9.next = 9;
+          return (0, _effects.put)({ type: _reducers.EXPENSES_RECEIVE, expenses: expenses });
 
-        case 10:
-          _context9.next = 16;
+        case 9:
+          _context9.next = 15;
           break;
 
-        case 12:
-          _context9.prev = 12;
-          _context9.t0 = _context9['catch'](4);
-          _context9.next = 16;
-          return (0, _effects.put)({ type: _reducers.EXPENSE_FAILED, message: _context9.t0.message });
+        case 11:
+          _context9.prev = 11;
+          _context9.t0 = _context9['catch'](3);
+          _context9.next = 15;
+          return (0, _effects.put)({ type: _reducers.EXPENSES_FAILED, message: _context9.t0.message });
 
-        case 16:
+        case 15:
         case 'end':
           return _context9.stop();
       }
     }
-  }, _marked[8], this, [[4, 12]]);
+  }, _marked[8], this, [[3, 11]]);
 }
 
-function watch_expense_request() {
-  return regeneratorRuntime.wrap(function watch_expense_request$(_context10) {
+function watch_expenses_request() {
+  return regeneratorRuntime.wrap(function watch_expenses_request$(_context10) {
     while (1) {
       switch (_context10.prev = _context10.next) {
         case 0:
           _context10.next = 2;
-          return (0, _effects.takeLatest)(_reducers.EXPENSE_REQUEST, expense_fetch);
+          return (0, _effects.takeLatest)(_reducers.EXPENSES_REQUEST, expenses_fetch);
 
         case 2:
         case 'end':
@@ -52925,10 +52924,10 @@ function watch_expense_request() {
   }, _marked[9], this);
 }
 
-// Expense Submit
-function expense_submit(action) {
-  var access_token, timestamp, amount, description, response;
-  return regeneratorRuntime.wrap(function expense_submit$(_context11) {
+// Expense
+function expense_fetch(action) {
+  var access_token, expense_id, expense;
+  return regeneratorRuntime.wrap(function expense_fetch$(_context11) {
     while (1) {
       switch (_context11.prev = _context11.next) {
         case 0:
@@ -52937,41 +52936,41 @@ function expense_submit(action) {
 
         case 2:
           access_token = _context11.sent;
-          timestamp = action.timestamp;
-          amount = action.amount;
-          description = action.description;
-          _context11.prev = 6;
-          _context11.next = 9;
-          return (0, _effects.call)(_api2.default.expense_submit, access_token, timestamp, amount, description);
+          expense_id = action.expense_id;
+          _context11.prev = 4;
+          _context11.next = 7;
+          return (0, _effects.call)(_api2.default.expense_fetch, access_token, expense_id);
 
-        case 9:
-          response = _context11.sent;
-          _context11.next = 12;
-          return (0, _effects.put)({ type: _reducers.EXPENSES_REQUEST });
+        case 7:
+          expense = _context11.sent;
+          _context11.next = 10;
+          return (0, _effects.put)({ type: _reducers.EXPENSE_RECEIVE, expense: expense });
 
-        case 12:
+        case 10:
           _context11.next = 16;
           break;
 
-        case 14:
-          _context11.prev = 14;
-          _context11.t0 = _context11['catch'](6);
+        case 12:
+          _context11.prev = 12;
+          _context11.t0 = _context11['catch'](4);
+          _context11.next = 16;
+          return (0, _effects.put)({ type: _reducers.EXPENSE_FAILED, message: _context11.t0.message });
 
         case 16:
         case 'end':
           return _context11.stop();
       }
     }
-  }, _marked[10], this, [[6, 14]]);
+  }, _marked[10], this, [[4, 12]]);
 }
 
-function watch_expense_submit() {
-  return regeneratorRuntime.wrap(function watch_expense_submit$(_context12) {
+function watch_expense_request() {
+  return regeneratorRuntime.wrap(function watch_expense_request$(_context12) {
     while (1) {
       switch (_context12.prev = _context12.next) {
         case 0:
           _context12.next = 2;
-          return (0, _effects.takeLatest)(_reducers.EXPENSE_SUBMIT, expense_submit);
+          return (0, _effects.takeLatest)(_reducers.EXPENSE_REQUEST, expense_fetch);
 
         case 2:
         case 'end':
@@ -52981,10 +52980,10 @@ function watch_expense_submit() {
   }, _marked[11], this);
 }
 
-// Expense Update
-function expense_update(action) {
-  var access_token, expense_id, timestamp, amount, description, response;
-  return regeneratorRuntime.wrap(function expense_update$(_context13) {
+// Expense Submit
+function expense_submit(action) {
+  var access_token, timestamp, amount, description, response;
+  return regeneratorRuntime.wrap(function expense_submit$(_context13) {
     while (1) {
       switch (_context13.prev = _context13.next) {
         case 0:
@@ -52993,42 +52992,41 @@ function expense_update(action) {
 
         case 2:
           access_token = _context13.sent;
-          expense_id = action.expense_id;
           timestamp = action.timestamp;
           amount = action.amount;
           description = action.description;
-          _context13.prev = 7;
-          _context13.next = 10;
-          return (0, _effects.call)(_api2.default.expense_update, access_token, expense_id, timestamp, amount, description);
+          _context13.prev = 6;
+          _context13.next = 9;
+          return (0, _effects.call)(_api2.default.expense_submit, access_token, timestamp, amount, description);
 
-        case 10:
+        case 9:
           response = _context13.sent;
-          _context13.next = 13;
+          _context13.next = 12;
           return (0, _effects.put)({ type: _reducers.EXPENSES_REQUEST });
 
-        case 13:
-          _context13.next = 17;
+        case 12:
+          _context13.next = 16;
           break;
 
-        case 15:
-          _context13.prev = 15;
-          _context13.t0 = _context13['catch'](7);
+        case 14:
+          _context13.prev = 14;
+          _context13.t0 = _context13['catch'](6);
 
-        case 17:
+        case 16:
         case 'end':
           return _context13.stop();
       }
     }
-  }, _marked[12], this, [[7, 15]]);
+  }, _marked[12], this, [[6, 14]]);
 }
 
-function watch_expense_update() {
-  return regeneratorRuntime.wrap(function watch_expense_update$(_context14) {
+function watch_expense_submit() {
+  return regeneratorRuntime.wrap(function watch_expense_submit$(_context14) {
     while (1) {
       switch (_context14.prev = _context14.next) {
         case 0:
           _context14.next = 2;
-          return (0, _effects.takeLatest)(_reducers.EXPENSE_UPDATE, expense_update);
+          return (0, _effects.takeLatest)(_reducers.EXPENSE_SUBMIT, expense_submit);
 
         case 2:
         case 'end':
@@ -53038,10 +53036,10 @@ function watch_expense_update() {
   }, _marked[13], this);
 }
 
-// Expense Delete
-function expense_delete(action) {
-  var access_token, expense_id, expenses;
-  return regeneratorRuntime.wrap(function expense_delete$(_context15) {
+// Expense Update
+function expense_update(action) {
+  var access_token, expense_id, timestamp, amount, description, response;
+  return regeneratorRuntime.wrap(function expense_update$(_context15) {
     while (1) {
       switch (_context15.prev = _context15.next) {
         case 0:
@@ -53051,38 +53049,41 @@ function expense_delete(action) {
         case 2:
           access_token = _context15.sent;
           expense_id = action.expense_id;
-          _context15.prev = 4;
-          _context15.next = 7;
-          return (0, _effects.call)(_api2.default.expense_delete, access_token, expense_id);
-
-        case 7:
-          expenses = _context15.sent;
+          timestamp = action.timestamp;
+          amount = action.amount;
+          description = action.description;
+          _context15.prev = 7;
           _context15.next = 10;
-          return (0, _effects.put)({ type: _reducers.EXPENSES_REQUEST });
+          return (0, _effects.call)(_api2.default.expense_update, access_token, expense_id, timestamp, amount, description);
 
         case 10:
-          _context15.next = 14;
+          response = _context15.sent;
+          _context15.next = 13;
+          return (0, _effects.put)({ type: _reducers.EXPENSES_REQUEST });
+
+        case 13:
+          _context15.next = 17;
           break;
 
-        case 12:
-          _context15.prev = 12;
-          _context15.t0 = _context15['catch'](4);
+        case 15:
+          _context15.prev = 15;
+          _context15.t0 = _context15['catch'](7);
 
-        case 14:
+        case 17:
         case 'end':
           return _context15.stop();
       }
     }
-  }, _marked[14], this, [[4, 12]]);
+  }, _marked[14], this, [[7, 15]]);
 }
 
-function watch_expense_delete() {
-  return regeneratorRuntime.wrap(function watch_expense_delete$(_context16) {
+function watch_expense_update() {
+  return regeneratorRuntime.wrap(function watch_expense_update$(_context16) {
     while (1) {
       switch (_context16.prev = _context16.next) {
         case 0:
           _context16.next = 2;
-          return (0, _effects.takeEvery)(_reducers.EXPENSE_DELETE, expense_delete);
+          return (0, _effects.takeLatest)(_reducers.EXPENSE_UPDATE, expense_update);
 
         case 2:
         case 'end':
@@ -53092,10 +53093,10 @@ function watch_expense_delete() {
   }, _marked[15], this);
 }
 
-// Report Fetch
-function report_fetch(action) {
-  var access_token, start_date, end_date, report;
-  return regeneratorRuntime.wrap(function report_fetch$(_context17) {
+// Expense Delete
+function expense_delete(action) {
+  var access_token, expense_id, expenses;
+  return regeneratorRuntime.wrap(function expense_delete$(_context17) {
     while (1) {
       switch (_context17.prev = _context17.next) {
         case 0:
@@ -53104,40 +53105,39 @@ function report_fetch(action) {
 
         case 2:
           access_token = _context17.sent;
-          start_date = action.start_date;
-          end_date = action.end_date;
-          _context17.prev = 5;
-          _context17.next = 8;
-          return (0, _effects.call)(_api2.default.report_fetch, access_token, start_date, end_date);
+          expense_id = action.expense_id;
+          _context17.prev = 4;
+          _context17.next = 7;
+          return (0, _effects.call)(_api2.default.expense_delete, access_token, expense_id);
 
-        case 8:
-          report = _context17.sent;
-          _context17.next = 11;
-          return (0, _effects.put)({ type: _reducers.REPORT_RECEIVE, report: report });
+        case 7:
+          expenses = _context17.sent;
+          _context17.next = 10;
+          return (0, _effects.put)({ type: _reducers.EXPENSES_REQUEST });
 
-        case 11:
-          _context17.next = 15;
+        case 10:
+          _context17.next = 14;
           break;
 
-        case 13:
-          _context17.prev = 13;
-          _context17.t0 = _context17['catch'](5);
+        case 12:
+          _context17.prev = 12;
+          _context17.t0 = _context17['catch'](4);
 
-        case 15:
+        case 14:
         case 'end':
           return _context17.stop();
       }
     }
-  }, _marked[16], this, [[5, 13]]);
+  }, _marked[16], this, [[4, 12]]);
 }
 
-function watch_report_request() {
-  return regeneratorRuntime.wrap(function watch_report_request$(_context18) {
+function watch_expense_delete() {
+  return regeneratorRuntime.wrap(function watch_expense_delete$(_context18) {
     while (1) {
       switch (_context18.prev = _context18.next) {
         case 0:
           _context18.next = 2;
-          return (0, _effects.takeLatest)(_reducers.REPORT_REQUEST, report_fetch);
+          return (0, _effects.takeEvery)(_reducers.EXPENSE_DELETE, expense_delete);
 
         case 2:
         case 'end':
@@ -53147,21 +53147,76 @@ function watch_report_request() {
   }, _marked[17], this);
 }
 
-// Combined Saga reducer
-function root_saga() {
-  return regeneratorRuntime.wrap(function root_saga$(_context19) {
+// Report Fetch
+function report_fetch(action) {
+  var access_token, start_date, end_date, report;
+  return regeneratorRuntime.wrap(function report_fetch$(_context19) {
     while (1) {
       switch (_context19.prev = _context19.next) {
         case 0:
           _context19.next = 2;
-          return (0, _effects.all)([watch_login_request(), watch_logout_request(), watch_expenses_request(), watch_expense_request(), watch_expense_submit(), watch_expense_update(), watch_expense_delete(), watch_report_request()]);
+          return get_access_token();
 
         case 2:
+          access_token = _context19.sent;
+          start_date = action.start_date;
+          end_date = action.end_date;
+          _context19.prev = 5;
+          _context19.next = 8;
+          return (0, _effects.call)(_api2.default.report_fetch, access_token, start_date, end_date);
+
+        case 8:
+          report = _context19.sent;
+          _context19.next = 11;
+          return (0, _effects.put)({ type: _reducers.REPORT_RECEIVE, report: report });
+
+        case 11:
+          _context19.next = 15;
+          break;
+
+        case 13:
+          _context19.prev = 13;
+          _context19.t0 = _context19['catch'](5);
+
+        case 15:
         case 'end':
           return _context19.stop();
       }
     }
-  }, _marked[18], this);
+  }, _marked[18], this, [[5, 13]]);
+}
+
+function watch_report_request() {
+  return regeneratorRuntime.wrap(function watch_report_request$(_context20) {
+    while (1) {
+      switch (_context20.prev = _context20.next) {
+        case 0:
+          _context20.next = 2;
+          return (0, _effects.takeLatest)(_reducers.REPORT_REQUEST, report_fetch);
+
+        case 2:
+        case 'end':
+          return _context20.stop();
+      }
+    }
+  }, _marked[19], this);
+}
+
+// Combined Saga reducer
+function root_saga() {
+  return regeneratorRuntime.wrap(function root_saga$(_context21) {
+    while (1) {
+      switch (_context21.prev = _context21.next) {
+        case 0:
+          _context21.next = 2;
+          return (0, _effects.all)([watch_register_request(), watch_login_request(), watch_logout_request(), watch_expenses_request(), watch_expense_request(), watch_expense_submit(), watch_expense_update(), watch_expense_delete(), watch_report_request()]);
+
+        case 2:
+        case 'end':
+          return _context21.stop();
+      }
+    }
+  }, _marked[20], this);
 }
 
 /***/ }),
@@ -53587,6 +53642,30 @@ function login_fetch(username, password) {
     });
 }
 
+function register_fetch(username, password) {
+    var body = {
+        username: username,
+        password: password
+    };
+
+    return fetch('/auth/register', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+    }).then(handle_fetch_errors).then(function (response) {
+        return response.json();
+    }).then(function (json) {
+        var access_token = json.access_token;
+        var refresh_token = json.refresh_token;
+
+        return [access_token, refresh_token];
+    }).catch(function (error) {
+        console.log(error.message);
+    });
+}
+
 function refresh_fetch(refresh_token) {
     var headers = get_auth_header(refresh_token);
 
@@ -53745,6 +53824,7 @@ function report_fetch(access_token, start_date, end_date) {
 }
 
 var Api = {
+    register_fetch: register_fetch,
     login_fetch: login_fetch,
     refresh_fetch: refresh_fetch,
     expenses_fetch: expenses_fetch,
@@ -55301,14 +55381,49 @@ var AuthContainer = function (_React$Component) {
 
         var _this = _possibleConstructorReturn(this, (AuthContainer.__proto__ || Object.getPrototypeOf(AuthContainer)).call(this, props));
 
+        _this.state = {
+            username: '',
+            password: ''
+        };
+
+        _this.handleUsernameChange = _this.handleUsernameChange.bind(_this);
+        _this.handlePasswordChange = _this.handlePasswordChange.bind(_this);
         _this.handleClickLogin = _this.handleClickLogin.bind(_this);
+        _this.handleClickRegister = _this.handleClickRegister.bind(_this);
         return _this;
     }
 
     _createClass(AuthContainer, [{
+        key: 'handleUsernameChange',
+        value: function handleUsernameChange(event) {
+            event.preventDefault();
+            this.setState({ username: event.target.value });
+        }
+    }, {
+        key: 'handlePasswordChange',
+        value: function handlePasswordChange(event) {
+            event.preventDefault();
+            this.setState({ password: event.target.value });
+        }
+    }, {
         key: 'handleClickLogin',
         value: function handleClickLogin() {
-            this.props.login_fetch('test', 'test1234');
+            var username = this.state.username;
+            var password = this.state.password;
+
+            this.props.login_fetch(username, password);
+        }
+    }, {
+        key: 'handleClickRegister',
+        value: function handleClickRegister() {
+            var username = this.state.username;
+            var password = this.state.password;
+
+            if (username.length === 0 || password.length === 0) {
+                return;
+            }
+
+            this.props.register_fetch(username, password);
         }
     }, {
         key: 'render',
@@ -55322,11 +55437,21 @@ var AuthContainer = function (_React$Component) {
                         null,
                         'Please register or login to view your expenses and expense reports.'
                     ),
+                    _react2.default.createElement('input', { onChange: this.handleUsernameChange, type: 'text',
+                        value: this.state.username, placeholder: 'Username' }),
+                    _react2.default.createElement('input', { onChange: this.handlePasswordChange, type: 'password',
+                        value: this.state.password, placeholder: 'Password' }),
                     _react2.default.createElement(
                         _foundation.FoundationButton,
                         { onClick: this.handleClickLogin,
                             large: true, expanded: true },
                         'Login'
+                    ),
+                    _react2.default.createElement(
+                        _foundation.FoundationButton,
+                        { onClick: this.handleClickRegister,
+                            large: true, expanded: true },
+                        'Register'
                     )
                 );
             }
@@ -55372,6 +55497,14 @@ var mapStateToProps = function mapStateToProps(state) {
 };
 
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+    var register_fetch = function register_fetch(username, password) {
+        dispatch({
+            type: 'REGISTER_REQUEST',
+            username: username,
+            password: password
+        });
+    };
+
     var login_fetch = function login_fetch(username, password) {
         dispatch({
             type: 'LOGIN_REQUEST',
@@ -55387,6 +55520,7 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     };
 
     return {
+        register_fetch: register_fetch,
         login_fetch: login_fetch,
         logout: logout
     };

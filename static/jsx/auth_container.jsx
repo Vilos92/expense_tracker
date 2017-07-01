@@ -10,11 +10,43 @@ class AuthContainer extends React.Component {
     constructor(props) {
         super(props);
 
+        this.state = {
+            username: '',
+            password: ''
+        };
+
+        this.handleUsernameChange = this.handleUsernameChange.bind(this);
+        this.handlePasswordChange = this.handlePasswordChange.bind(this);
         this.handleClickLogin = this.handleClickLogin.bind(this);
+        this.handleClickRegister = this.handleClickRegister.bind(this);
+    }
+
+    handleUsernameChange(event) {
+        event.preventDefault();
+        this.setState({username: event.target.value});
+    }
+
+    handlePasswordChange(event) {
+        event.preventDefault();
+        this.setState({password: event.target.value});
     }
 
     handleClickLogin() {
-        this.props.login_fetch('test', 'test1234');
+        const username = this.state.username;
+        const password = this.state.password;
+
+        this.props.login_fetch(username, password);
+    }
+
+    handleClickRegister() {
+        const username = this.state.username;
+        const password = this.state.password;
+
+        if (username.length === 0 || password.length === 0) {
+            return;
+        }
+
+        this.props.register_fetch(username, password);
     }
 
     render() {
@@ -23,9 +55,20 @@ class AuthContainer extends React.Component {
                 <div>
                     <p>Please register or login to view your expenses and expense reports.</p>
 
+                    <input onChange={this.handleUsernameChange} type="text" 
+                        value={this.state.username} placeholder="Username" />
+
+                    <input onChange={this.handlePasswordChange} type="password" 
+                        value={this.state.password} placeholder="Password" />
+
                     <FoundationButton onClick={this.handleClickLogin}
                                     large={true} expanded={true}>
                         Login
+                    </FoundationButton>
+
+                    <FoundationButton onClick={this.handleClickRegister}
+                                    large={true} expanded={true}>
+                        Register
                     </FoundationButton>
                 </div>
             );
@@ -65,6 +108,14 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => {
+    const register_fetch = (username, password) => {
+        dispatch({
+            type: 'REGISTER_REQUEST',
+            username,
+            password
+        });
+    };
+
     const login_fetch = (username, password) => {
         dispatch({
             type: 'LOGIN_REQUEST',
@@ -80,6 +131,7 @@ const mapDispatchToProps = (dispatch) => {
     };
 
     return {
+        register_fetch,
         login_fetch,
         logout
     }; 

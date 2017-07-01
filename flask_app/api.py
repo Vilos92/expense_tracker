@@ -9,7 +9,7 @@ from flask_jwt_extended import (create_access_token, create_refresh_token,
         jwt_required, jwt_refresh_token_required, get_jwt_identity)
 
 from flask_app import app, rest_api
-from flask_app.auth import authenticate_user, get_user
+from flask_app.auth import create_user, authenticate_user, get_user
 from flask_app.retriever import get_expense, get_expenses, get_report
 from flask_app.controller import insert_expense, update_expense, delete_expense
 
@@ -90,6 +90,32 @@ class AdminResource(Resource):
     method_decorators = [admin_required]
 
 
+class Register(Resource):
+    def post(self):
+        request_json = request.json
+
+        required_params = ['username', 'password']
+        username, password = parse_request_json(request_json, *required_params)
+
+        try:
+            user = create_user(username, password)
+        except:
+            error = 'Could not create user'
+            raise InvalidRequest(error, 401)
+
+
+        if not user:
+            error = 'Could not create user'
+            raise InvalidRequest(error, 401)
+        
+        return {
+                'access_token': create_access_token(identity=user.id),
+                'refresh_token': create_refresh_token(identity=user.id)
+                }
+
+rest_api.add_resource(Register, '/auth/register')
+
+
 class Login(Resource):
     def post(self):
         request_json = request.json
@@ -109,6 +135,7 @@ class Login(Resource):
                 }
 
 rest_api.add_resource(Login, '/auth/login')
+
 
 @app.route('/refresh', methods=['POST'])
 class Refresh(Resource):

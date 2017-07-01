@@ -14,9 +14,12 @@ def create_user(name, password):
     salt = bcrypt.gensalt()
     hashed_password = hash_password(salt, password)
 
-    new_user = User(name=name, salt=salt.decode('utf-8'), password=hashed_password.decode('utf-8'))
-    db.session.add(new_user)
-    db.session.commit()
+    try:
+        new_user = User(name=name, salt=salt.decode('utf-8'), password=hashed_password.decode('utf-8'))
+        db.session.add(new_user)
+        db.session.commit()
+    except:
+        raise
 
     return new_user
 
