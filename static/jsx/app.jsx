@@ -12,7 +12,7 @@ import { FoundationButton } from '~/components/foundation.jsx';
 import ReduxAuthContainer from './auth_container.jsx';
 import ReduxExpenseListView from './views/expense_list.jsx';
 import ReduxExpenseView from './views/expense.jsx';
-import ReportView from './views/report.jsx';
+import ReduxReportView from './views/report.jsx';
 
 
 class MainColumn extends React.Component {
@@ -42,7 +42,7 @@ export default function AppRouter(props) {
                     <ReduxAuthContainer>
                         <Route exact path="/" component={ReduxExpenseListView} />
                         <Route exact path="/expense/:expense_id" component={ReduxExpenseView} />
-                        <Route exact path="/report" component={ReportView} />
+                        <Route exact path="/report" component={ReduxReportView} />
                     </ReduxAuthContainer>
                 </Switch>
             </MainColumn>

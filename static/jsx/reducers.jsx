@@ -65,7 +65,7 @@ export function expenses(state=expenses_default_state, action) {
             let data = {...state.data};
             data[expense.id] = expense;
 
-            return {...state, data: {...data} } 
+            return {...state, data } 
         case EXPENSES_RECEIVE:
             const expenses = action.expenses;
 
@@ -83,9 +83,33 @@ export function expenses(state=expenses_default_state, action) {
     }
 }
 
+
+export const REPORT_REQUEST = 'REPORT_REQUEST';
+export const REPORT_RECEIVE = 'REPORT_RECEIVE';
+export const REPORT_FAILED = 'REPORT_FAILED';
+
+const report_default_state = {
+    data: {},
+};
+
+export function report(state=report_default_state, action) {
+    switch(action.type) {
+        case REPORT_RECEIVE:
+            if (!action.report) {
+                return state;
+            }
+
+            return {...state, data: action.report};
+        case REPORT_FAILED:
+        default:
+            return state;
+    }
+}
+
 const root_reducer = combineReducers({
     auth,
     expenses,
+    report
 });
 
 export default root_reducer;

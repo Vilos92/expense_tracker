@@ -126,7 +126,6 @@ function expense_submit(access_token, timestamp, amount, description) {
     .then(handle_fetch_errors)
     .then(response => response.json())
     .then(json => {
-        console.log(json);
     }).
     catch(error => {
         console.log(error.message);
@@ -161,6 +160,7 @@ function expense_update(access_token, expense_id, timestamp, amount, description
     .then(response => response.json())
     .then(json => {
         console.log(json);
+        // To-Do: Load expense from JSON here, instead of doing a refresh of all expenses
     }).
     catch(error => {
         console.log(error.message);
@@ -186,6 +186,34 @@ function expense_delete(access_token, expense_id) {
 }
 
 
+function report_fetch(access_token, start_date, end_date) {
+    const headers = get_auth_header(access_token);
+
+    let url = '/api/report';
+    if (start_date && end_date) {
+        url = `${url}?start-date=${start_date}&end-date=${end_date}`;
+    }
+    else if (start_date) {
+        report_link = `${url}?start-date=${start_date}`;
+    } else if (end_date) {
+        report_link = `${url}?end-date=${end_date}`;
+    }
+
+    return fetch(url, {
+        method: 'GET',
+        headers
+    })
+    .then(handle_fetch_errors)
+    .then(response => response.json())
+    .then(json => {
+        return json.report;
+    }).
+    catch(error => {
+        console.log(error.message);
+    });
+}
+
+
 const Api = {
     login_fetch,
     refresh_fetch,
@@ -193,7 +221,8 @@ const Api = {
     expense_fetch,
     expense_submit,
     expense_update,
-    expense_delete
+    expense_delete,
+    report_fetch
 }
 
 export default Api;

@@ -153,20 +153,21 @@ class ExpenseListView extends React.Component {
             }
         }
 
+        let expense_content = <h2>No expenses have been added in this date range.</h2>;
+        if (expense_items.length > 0) {
+            expense_content = expense_items;
+        };
+
         const start_date = this.state.start_date;
         const end_date = this.state.end_date;
 
         let report_link = '/report';
         if (start_date && end_date) {
-
             report_link = `${report_link}?start-date=${start_date}&end-date=${end_date}`;
         }
         else if (start_date) {
-            const start_date = this.state.start_date;
-
             report_link = `${report_link}?start-date=${start_date}`;
         } else if (end_date) {
-
             report_link = `${report_link}?end-date=${end_date}`;
         }
 
@@ -215,7 +216,7 @@ class ExpenseListView extends React.Component {
                     </Link>
                 </div>
 
-                {expense_items}
+                {expense_content}
             </div>
         );
     }

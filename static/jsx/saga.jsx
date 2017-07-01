@@ -14,6 +14,8 @@ import { EXPENSES_REQUEST, EXPENSES_RECEIVE, EXPENSES_FAILED,
     EXPENSE_REQUEST, EXPENSE_RECEIVE, EXPENSE_FAILED,
     EXPENSE_SUBMIT, EXPENSE_UPDATE, EXPENSE_DELETE } from './reducers.jsx';
 
+import { REPORT_REQUEST, REPORT_RECEIVE, REPORT_FAILED } from './reducers.jsx';
+
 import Api from './api.jsx';
 
 
@@ -188,9 +190,7 @@ function* expense_delete(action) {
     const expense_id = action.expense_id;
 
 	try {
-        console.log('A');
 		const expenses = yield call(Api.expense_delete, access_token, expense_id);
-        console.log('B');
 
         yield put({type: EXPENSES_REQUEST}); // Don't do this, use return value
 
@@ -205,6 +205,29 @@ export function* watch_expense_delete() {
     yield takeEvery(EXPENSE_DELETE, expense_delete)
 }
 
+
+// Report Fetch
+function* report_fetch(action) {
+    const access_token = yield get_access_token();
+    
+    const start_date = action.start_date;
+    const end_date = action.end_date;
+
+	try {
+		const report = yield call(Api.report_fetch, access_token, start_date, end_date);
+
+        yield put({type: REPORT_RECEIVE, report}); // Don't do this, use return value
+	} catch (e) {
+		//yield put({type: EXPENSES_DELETE_FAILED, message: e.message});
+	}
+}
+
+
+export function* watch_report_request() {
+    yield takeLatest(REPORT_REQUEST, report_fetch)
+}
+
+
 export default function* root_saga() {
     yield all([
         watch_login_request(),
@@ -213,6 +236,7 @@ export default function* root_saga() {
         watch_expense_request(),
         watch_expense_submit(),
         watch_expense_update(),
-        watch_expense_delete()
+        watch_expense_delete(),
+        watch_report_request()
     ])
 }
