@@ -11,18 +11,32 @@ export default function ExpensePanel(props) {
     const expense = props.expense;
 
     const dt = moment(expense.timestamp);
+    const dt_str = dt.format("dddd, MMMM Do YYYY, h:mm:ss a");
 
-    const delete_button = (
-        <FoundationButton onClick={props.delete_expense}>Delete</FoundationButton>
-    );
+    let header = <h4>{dt_str}</h4>;
+
+    let delete_button = null;
+    if (props.delete_expense) {
+        delete_button = (
+            <FoundationButton onClick={props.delete_expense}>Delete</FoundationButton>
+        );
+
+        header = (
+            <Link to={`/expense/${expense.id}`}>
+                {header}
+            </Link>
+        );
+    }
 
     return (
         <Panel key={expense.id} onClick={props.onClick}>
-            <Link to={`/expense/${expense.id}`}>
-                {dt.format()} 
-            </Link>
+            {header}
             
-            | {expense.amount} | {expense.description} | {delete_button}
+            <h5>${expense.amount.toFixed(2)}</h5>
+
+            <p>{expense.description}</p>
+
+            {delete_button}
         </Panel>
     );
 }

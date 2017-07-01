@@ -1,6 +1,7 @@
 import moment from 'moment';
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import { FoundationButton } from '~/components/foundation.jsx';
@@ -119,6 +120,18 @@ class ExpenseListView extends React.Component {
                                 large={true} expanded={true}>
                     Add Expense
                 </FoundationButton>
+
+                <Link to="/report">
+                    <FoundationButton large={true} expanded={true}>
+                        View Report 
+                    </FoundationButton>
+                </Link>
+
+                <label htmlFor="start-date-filter">Start Date</label>
+                <input id="start-date-filter" type="date" />
+
+                <label htmlFor="end-date-filter">End Date</label>
+                <input id="end-date-filter" type="date" />
 
                 {expense_items}
             </div>

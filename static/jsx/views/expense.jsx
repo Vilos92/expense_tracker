@@ -9,7 +9,9 @@ class ExpenseView extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {};
+        this.state = {
+            
+        };
     }
 
     componentWillMount() {
@@ -20,13 +22,8 @@ class ExpenseView extends React.Component {
 
     render() {
         const expense = this.props.expense;
-        console.log('render!');
-        console.log(expense);
-        console.log(this.props);
 
         if (!expense) {
-            console.log(this.props.expense);
-            console.log(expense);
             return <div>Expense not available.</div>;
         }
 
@@ -42,7 +39,7 @@ class ExpenseView extends React.Component {
 
                 <FoundationButton onClick={this.handleAddExpense}
                                 large={true} expanded={true}>
-                    Add Expense
+                    Update Expense
                 </FoundationButton>
 
                 <ExpensePanel expense={expense} />

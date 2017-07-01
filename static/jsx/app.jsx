@@ -1,4 +1,5 @@
 import main_column_style from '~/../scss/main_column.scss';
+import utils_style from '~/../scss/utils.scss';
 
 
 import React from 'react';
@@ -14,22 +15,28 @@ import ReduxExpenseView from './views/expense.jsx';
 import ReportView from './views/report.jsx';
 
 
-function MainColumn(props) {
-    return (
-        <div className="small-8 small-centered columns">
-            <div className="main-column">
-                <Link to="/">
-                    <FoundationButton>
-                        Home
-                    </FoundationButton>
-                </Link>
+class MainColumn extends React.Component {
+    constructor(props) {
+        super(props)
+    }
 
-                <h1>Expense Tracker</h1>
+    render() {
+        return (
+            <div className="small-8 small-centered columns">
+                <div className="main-column">
+                    <Link to="/">
+                        <FoundationButton>
+                            Home
+                        </FoundationButton>
+                    </Link>
 
-                {props.children}
+                    <h1>Expense Tracker</h1>
+
+                    {this.props.children}
+                </div>
             </div>
-        </div>
-    );  
+        );  
+    }
 }
 
 
@@ -39,9 +46,9 @@ export default function AppRouter(props) {
             <MainColumn>
                 <Switch>
                     <ReduxAuthContainer>
-                            <Route exact path="/" component={ReduxExpenseListView} />
-                            <Route path="/expense/:expense_id" component={ReduxExpenseView} />
-                            <Route path="/report" component={ReportView} />
+                        <Route exact path="/" component={ReduxExpenseListView} />
+                        <Route exact path="/expense/:expense_id" component={ReduxExpenseView} />
+                        <Route exact path="/report" component={ReportView} />
                     </ReduxAuthContainer>
                 </Switch>
             </MainColumn>

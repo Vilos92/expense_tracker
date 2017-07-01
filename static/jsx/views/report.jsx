@@ -9,6 +9,7 @@ export default class ReportView extends React.Component {
     componentWillMount() {
         const access_token = this.props.access_token;
 
+        /*
         fetch('/api/report', {
             method: 'GET',
             headers: {
@@ -30,6 +31,7 @@ export default class ReportView extends React.Component {
         catch(error => {
             console.log(error.message);
         });
+        */
     }
 
     render() {

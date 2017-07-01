@@ -19,6 +19,8 @@ class AuthContainer extends React.Component {
         if (!this.props.auth || !this.props.auth.refresh_token || !this.props.auth.access_token) {
             return (
                 <div>
+                    <p>Please register or login to view your expenses and expense reports.</p>
+
                     <FoundationButton onClick={this.handleClickLogin}
                                     large={true} expanded={true}>
                         Login
@@ -27,12 +29,20 @@ class AuthContainer extends React.Component {
             );
         }
 
+        let logout_button = null;
+        if (this.props.auth && this.props.auth.refresh_token) {
+            logout_button = (
+                <div className="float-right">
+                    <FoundationButton onClick={this.props.logout}>
+                        Logout
+                    </FoundationButton>
+                </div>
+            );
+        }
+
         return (
             <div>
-                <FoundationButton onClick={this.props.logout}
-                                large={true} expanded={true}>
-                    Logout
-                </FoundationButton>
+                {logout_button}
 
                 {this.props.children}
             </div>
@@ -63,7 +73,7 @@ const mapDispatchToProps = (dispatch) => {
 
     return {
         login_fetch,
-        logout,
+        logout
     }; 
 };
 
