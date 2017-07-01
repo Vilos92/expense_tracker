@@ -17,7 +17,6 @@ $color-kinda-gray: #E6E6E6;
 
 // Dominant Color Assignments
 $color-primary: $color-azure-blue;
-$color-primary: #5C9EAD;
 $color-primary-alt: $color-turquoise-blue;
 
 
@@ -31,7 +30,7 @@ $color-alert-hover: $color-amber-red;
 
 
 // General Color Assignments
-$body-background: #7BB2D9;
+$body-background: $color-primary;
 
-$link-color: #5C9EAD;
+$link-color: $color-azure-blue;
 $link-hover-color: $color-turquoise-blue;

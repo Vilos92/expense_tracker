@@ -53766,10 +53766,7 @@ function expense_update(access_token, expense_id, timestamp, amount, description
         body: JSON.stringify(body)
     }).then(handle_fetch_errors).then(function (response) {
         return response.json();
-    }).then(function (json) {
-        console.log(json);
-        // To-Do: Load expense from JSON here, instead of doing a refresh of all expenses
-    }).catch(function (error) {
+    }).then(function (json) {}).catch(function (error) {
         console.log(error.message);
     });
 }

@@ -186,8 +186,6 @@ function expense_update(access_token, expense_id, timestamp, amount, description
     .then(handle_fetch_errors)
     .then(response => response.json())
     .then(json => {
-        console.log(json);
-        // To-Do: Load expense from JSON here, instead of doing a refresh of all expenses
     }).
     catch(error => {
         console.log(error.message);
