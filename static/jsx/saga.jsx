@@ -228,6 +228,7 @@ export function* watch_report_request() {
 }
 
 
+// Combined Saga reducer
 export default function* root_saga() {
     yield all([
         watch_login_request(),

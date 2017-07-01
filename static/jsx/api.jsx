@@ -189,14 +189,23 @@ function expense_delete(access_token, expense_id) {
 function report_fetch(access_token, start_date, end_date) {
     const headers = get_auth_header(access_token);
 
+    if (start_date) {
+        const start_dt = moment(start_date);
+        start_date = start_dt.utc().format();
+    }
+
+    if (end_date) {
+        const end_dt = moment(end_date);
+        end_date = end_dt.utc().format();
+    }
+
     let url = '/api/report';
     if (start_date && end_date) {
         url = `${url}?start-date=${start_date}&end-date=${end_date}`;
-    }
-    else if (start_date) {
-        report_link = `${url}?start-date=${start_date}`;
+    } else if (start_date) {
+        url = `${url}?start-date=${start_date}`;
     } else if (end_date) {
-        report_link = `${url}?end-date=${end_date}`;
+        url = `${url}?end-date=${end_date}`;
     }
 
     return fetch(url, {

@@ -199,8 +199,11 @@ class Report(AuthenticatedResource):
     def get(self):
         user = current_user()
 
+        start_date = request.args.get('start-date', None)
+        end_date = request.args.get('end-date', None)
+
         logger.debug('Getting report for user with id = {}'.format(user.id))
-        report = get_report(user_id=user.id)
+        report = get_report(user.id, start_date, end_date)
 
         return {'report': report}
 
