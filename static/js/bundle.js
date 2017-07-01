@@ -55576,7 +55576,7 @@ var ExpenseListView = function (_React$Component2) {
                             continue;
                         }
 
-                        if (end_dt && expense.timestamp < end_dt) {
+                        if (end_dt && expense.timestamp > end_dt) {
                             continue;
                         }
 
