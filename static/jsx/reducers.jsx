@@ -46,6 +46,7 @@ export const EXPENSE_RECEIVE = 'EXPENSE_RECEIVE';
 export const EXPENSE_FAILED = 'EXPENSE_FAILED';
 
 export const EXPENSE_SUBMIT = 'EXPENSE_SUBMIT';
+export const EXPENSE_UPDATE = 'EXPENSE_UPDATE';
 export const EXPENSE_DELETE = 'EXPENSE_DELETE';
 
 const expenses_default_state = {
@@ -55,6 +56,9 @@ const expenses_default_state = {
 export function expenses(state=expenses_default_state, action) {
     switch(action.type) {
         case EXPENSE_RECEIVE:
+            if (!action.expense) {
+                return state;
+            }
 
             const expense = action.expense;
 

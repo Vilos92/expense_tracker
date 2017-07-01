@@ -40,13 +40,17 @@ class ExpenseListView extends React.Component {
         this.state = {
             timestamp,
             amount: 0.00,
-            description: ''
+            description: '',
+            start_date: '',
+            end_date: ''
         }
 
         this.handleDateChange = this.handleDateChange.bind(this);
         this.handleAmountChange = this.handleAmountChange.bind(this);
         this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
         this.handleAddExpense = this.handleAddExpense.bind(this);
+        this.handleStartDateChange = this.handleStartDateChange.bind(this);
+        this.handleEndDateChange = this.handleEndDateChange.bind(this);
     }
 
     componentWillMount() {
@@ -71,18 +75,28 @@ class ExpenseListView extends React.Component {
         this.setState({amount});
     }
 
-    handleAddExpense() {
-        this.props.expense_submit(this.state.timestamp, this.state.amount, this.state.description);
-    }
-
     handleDescriptionChange(event) {
         event.preventDefault();
         this.setState({description: event.target.value});
     }
 
-	addExpenseHandler() {
-        const amount = 10;
-        const description = 'Some description';
+    handleAddExpense() {
+        this.props.expense_submit(this.state.timestamp, this.state.amount, this.state.description);
+    }
+
+
+    handleStartDateChange(event) {
+        event.preventDefault();
+        this.setState({start_date: event.target.value});
+    }
+
+    handleEndDateChange(event) {
+        event.preventDefault();
+        this.setState({end_date: event.target.value});
+    }
+
+    handleClearDateFilter() {
+
     }
 
     render() {
@@ -90,19 +104,47 @@ class ExpenseListView extends React.Component {
         if (this.props.expenses && this.props.expenses.data) {
             const expenses = this.props.expenses.data;
 
-            expense_items = [];
+            let start_dt = null;
+            if (this.state.start_date) {
+                start_dt = moment(this.state.start_date);
+            }
 
+            let end_dt = null;
+            if (this.state.end_date) {
+                end_dt = moment(this.state.end_date);
+            }
+
+
+            let expense_list = [];
             for (let expense_id in expenses) {
                 if (expenses.hasOwnProperty(expense_id)) {
-                    const expense = expenses[expense_id];
+                    let expense = expenses[expense_id];
+                    expense.timestamp = moment(expense.timestamp);
+                    
+                    if (start_dt && expense.timestamp < start_dt) {
+                        continue;
+                    }
 
-                    const dt = moment(expense.timestamp);
+                    if (end_dt && expense.timestamp < end_dt) {
+                        continue;
+                    }
 
-                    expense_items.push(
-                        <ExpenseItem key={expense.id} expense={expense} 
-                            expense_delete={this.props.expense_delete} />
-                    );
+                    expense_list.push(expense);
                 }
+            }
+
+            expense_list.sort((a, b) => {
+                return a.timestamp - b.timestamp;
+            });
+
+            expense_items = [];
+            for (let i = 0; i < expense_list.length; ++i) {
+                const expense = expense_list[i];
+
+                expense_items.push(
+                    <ExpenseItem key={expense.id} expense={expense} 
+                        expense_delete={this.props.expense_delete} />
+                );
             }
         }
 
@@ -121,17 +163,25 @@ class ExpenseListView extends React.Component {
                     Add Expense
                 </FoundationButton>
 
-                <Link to="/report">
-                    <FoundationButton large={true} expanded={true}>
-                        View Report 
-                    </FoundationButton>
-                </Link>
-
                 <label htmlFor="start-date-filter">Start Date</label>
-                <input id="start-date-filter" type="date" />
+                <input id="start-date-filter" type="date"
+                    value={this.state.start_date} onChange={this.handleStartDateChange} />
 
                 <label htmlFor="end-date-filter">End Date</label>
-                <input id="end-date-filter" type="date" />
+                <input id="end-date-filter" type="date"
+                    value={this.state.end_date} onChange={this.handleEndDateChange} />
+
+                <FoundationButton large={true}>
+                    Clear Date Filter
+                </FoundationButton>
+
+                <div className="float-right">
+                    <Link to="/report">
+                        <FoundationButton large={true}>
+                            View Report 
+                        </FoundationButton>
+                    </Link>
+                </div>
 
                 {expense_items}
             </div>

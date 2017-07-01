@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { Link } from 'react-router-dom';
+
 import { FoundationButton } from './components/foundation.jsx';
 
 
@@ -42,6 +44,12 @@ class AuthContainer extends React.Component {
 
         return (
             <div>
+                <Link to="/">
+                    <FoundationButton>
+                        Home
+                    </FoundationButton>
+                </Link>
+
                 {logout_button}
 
                 {this.props.children}

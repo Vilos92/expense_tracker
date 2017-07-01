@@ -9,9 +9,11 @@ import { select, call, put, takeEvery, takeLatest, all } from 'redux-saga/effect
 import { REFRESH_REQUEST, REFRESH_RECEIVE, REFRESH_FAILED,
     LOGIN_REQUEST, LOGIN_RECEIVE, LOGIN_FAILED,
     LOGOUT_REQUEST, LOGOUT } from './reducers.jsx';
+
 import { EXPENSES_REQUEST, EXPENSES_RECEIVE, EXPENSES_FAILED,
     EXPENSE_REQUEST, EXPENSE_RECEIVE, EXPENSE_FAILED,
-    EXPENSE_SUBMIT, EXPENSE_DELETE } from './reducers.jsx';
+    EXPENSE_SUBMIT, EXPENSE_UPDATE, EXPENSE_DELETE } from './reducers.jsx';
+
 import Api from './api.jsx';
 
 
@@ -152,6 +154,33 @@ export function* watch_expense_submit() {
 }
 
 
+// Expense Update
+function* expense_update(action) {
+    const access_token = yield get_access_token();
+    
+    const expense_id = action.expense_id;
+    const timestamp = action.timestamp;
+    const amount = action.amount;
+    const description = action.description;
+
+	try {
+		const response = yield call(Api.expense_update, access_token,
+                expense_id, timestamp, amount, description);
+
+        yield put({type: EXPENSES_REQUEST}); // Don't do this, use return value
+
+		//yield put({type: EXPENSES_RECEIVE, expenses});
+	} catch (e) {
+		//yield put({type: EXPENSES_FAILED, message: e.message});
+	}
+}
+
+
+export function* watch_expense_update() {
+    yield takeLatest(EXPENSE_UPDATE, expense_update)
+}
+
+
 // Expense Delete
 function* expense_delete(action) {
     const access_token = yield get_access_token();
@@ -183,6 +212,7 @@ export default function* root_saga() {
         watch_expenses_request(),
         watch_expense_request(),
         watch_expense_submit(),
+        watch_expense_update(),
         watch_expense_delete()
     ])
 }

@@ -134,6 +134,40 @@ function expense_submit(access_token, timestamp, amount, description) {
 }
 
 
+function expense_update(access_token, expense_id, timestamp, amount, description) {
+    const token_headers = get_auth_header(access_token);
+
+    const headers = {
+        ...token_headers,
+        'Content-Type': 'application/json'
+    };
+
+    // Attach timezome to timestamp
+    const dt = moment(timestamp);
+    const timestamp_with_tz = dt.utc().format();
+
+    const body = {
+        timestamp: timestamp_with_tz,
+        amount,
+        description
+    };
+
+    return fetch(`/api/expense/${expense_id}`, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify(body)
+    })
+    .then(handle_fetch_errors)
+    .then(response => response.json())
+    .then(json => {
+        console.log(json);
+    }).
+    catch(error => {
+        console.log(error.message);
+    });
+}
+
+
 function expense_delete(access_token, expense_id) {
     const headers = get_auth_header(access_token);
 
@@ -158,6 +192,7 @@ const Api = {
     expenses_fetch,
     expense_fetch,
     expense_submit,
+    expense_update,
     expense_delete
 }
 

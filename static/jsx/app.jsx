@@ -24,12 +24,6 @@ class MainColumn extends React.Component {
         return (
             <div className="small-8 small-centered columns">
                 <div className="main-column">
-                    <Link to="/">
-                        <FoundationButton>
-                            Home
-                        </FoundationButton>
-                    </Link>
-
                     <h1>Expense Tracker</h1>
 
                     {this.props.children}
