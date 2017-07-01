@@ -493,7 +493,6 @@ th {
 .button {
   color: #FFFFFF;
   background-color: #229999;
-  font-family: "Roboto", sans-serif;
   font-weight: bold;
   text-transform: uppercase;
   transition: background-color 0.2s;

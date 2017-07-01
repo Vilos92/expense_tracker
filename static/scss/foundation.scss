@@ -1,5 +1,4 @@
 @import 'colors.scss';
-@import 'fonts.scss';
 @import 'material.scss';
 
 
@@ -32,7 +31,6 @@ $button-drop-shadow: $material-drop-shadow-extra-small;
     @include button-colors($color-titanium-white, $button-background,
         $button-hover-background);
 
-    font-family: $button-font;
     font-weight: bold;
     text-transform: uppercase;
 
