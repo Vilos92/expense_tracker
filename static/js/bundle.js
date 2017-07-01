@@ -55484,6 +55484,22 @@ var ExpenseListView = function (_React$Component2) {
                 }
             }
 
+            var start_date = this.state.start_date;
+            var end_date = this.state.end_date;
+
+            var report_link = '/report';
+            if (start_date && end_date) {
+
+                report_link = report_link + '?start-date=' + start_date + '&end-date=' + end_date;
+            } else if (start_date) {
+                var _start_date = this.state.start_date;
+
+                report_link = report_link + '?start-date=' + _start_date;
+            } else if (end_date) {
+
+                report_link = report_link + '?end-date=' + end_date;
+            }
+
             return _react2.default.createElement(
                 'div',
                 null,
@@ -55549,7 +55565,7 @@ var ExpenseListView = function (_React$Component2) {
                     { className: 'float-right' },
                     _react2.default.createElement(
                         _reactRouterDom.Link,
-                        { to: '/report' },
+                        { to: report_link },
                         _react2.default.createElement(
                             _foundation.FoundationButton,
                             { large: true },

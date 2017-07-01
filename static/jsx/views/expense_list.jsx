@@ -153,6 +153,23 @@ class ExpenseListView extends React.Component {
             }
         }
 
+        const start_date = this.state.start_date;
+        const end_date = this.state.end_date;
+
+        let report_link = '/report';
+        if (start_date && end_date) {
+
+            report_link = `${report_link}?start-date=${start_date}&end-date=${end_date}`;
+        }
+        else if (start_date) {
+            const start_date = this.state.start_date;
+
+            report_link = `${report_link}?start-date=${start_date}`;
+        } else if (end_date) {
+
+            report_link = `${report_link}?end-date=${end_date}`;
+        }
+
         return (
             <div>
                 <h3>Create New Expense</h3>
@@ -191,7 +208,7 @@ class ExpenseListView extends React.Component {
                 </FoundationButton>
 
                 <div className="float-right">
-                    <Link to="/report">
+                    <Link to={report_link}>
                         <FoundationButton large={true}>
                             View Report 
                         </FoundationButton>
