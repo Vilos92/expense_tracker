@@ -40,17 +40,39 @@ export function auth(state=null, action) {
 export const EXPENSES_REQUEST = 'EXPENSES_REQUEST';
 export const EXPENSES_RECEIVE = 'EXPENSES_RECEIVE';
 export const EXPENSES_FAILED = 'EXPENSES_FAILED';
+
+export const EXPENSE_REQUEST = 'EXPENSE_REQUEST';
+export const EXPENSE_RECEIVE = 'EXPENSE_RECEIVE';
+export const EXPENSE_FAILED = 'EXPENSE_FAILED';
+
 export const EXPENSE_SUBMIT = 'EXPENSE_SUBMIT';
 export const EXPENSE_DELETE = 'EXPENSE_DELETE';
 
 const expenses_default_state = {
-    data: [],
+    data: {},
 };
 
 export function expenses(state=expenses_default_state, action) {
     switch(action.type) {
+        case EXPENSE_RECEIVE:
+
+            const expense = action.expense;
+
+            let data = {...state.data};
+            data[expense.id] = expense;
+
+            return {...state, data: {...data} } 
         case EXPENSES_RECEIVE:
-            return {...state, data: action.expenses} 
+            const expenses = action.expenses;
+
+            let new_data = {};
+            for (let i = 0; i < expenses.length; ++i) {
+                const expense = expenses[i];
+
+                new_data[expense.id] = expense;
+            }
+
+            return {...state, data: new_data}
         case EXPENSES_FAILED:
         default:
             return state;

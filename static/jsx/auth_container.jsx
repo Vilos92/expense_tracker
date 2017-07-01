@@ -26,11 +26,6 @@ class AuthContainer extends React.Component {
                 </div>
             );
         }
-        const auth_children = React.Children.map(this.props.children,
-            (child) => React.cloneElement(child, {
-                access_token: this.props.auth.access_token
-            })
-        );
 
         return (
             <div>
@@ -39,7 +34,7 @@ class AuthContainer extends React.Component {
                     Logout
                 </FoundationButton>
 
-                {auth_children}
+                {this.props.children}
             </div>
         );
     }

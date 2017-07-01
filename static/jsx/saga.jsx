@@ -10,6 +10,7 @@ import { REFRESH_REQUEST, REFRESH_RECEIVE, REFRESH_FAILED,
     LOGIN_REQUEST, LOGIN_RECEIVE, LOGIN_FAILED,
     LOGOUT_REQUEST, LOGOUT } from './reducers.jsx';
 import { EXPENSES_REQUEST, EXPENSES_RECEIVE, EXPENSES_FAILED,
+    EXPENSE_REQUEST, EXPENSE_RECEIVE, EXPENSE_FAILED,
     EXPENSE_SUBMIT, EXPENSE_DELETE } from './reducers.jsx';
 import Api from './api.jsx';
 
@@ -105,6 +106,26 @@ export function* watch_expenses_request() {
 }
 
 
+// Expense
+function* expense_fetch(action) {
+    const access_token = yield get_access_token();
+
+    const expense_id = action.expense_id;
+
+	try {
+		const expense = yield call(Api.expense_fetch, access_token, expense_id);
+		yield put({type: EXPENSE_RECEIVE, expense});
+	} catch (e) {
+		yield put({type: EXPENSE_FAILED, message: e.message});
+	}
+}
+
+
+export function* watch_expense_request() {
+    yield takeLatest(EXPENSE_REQUEST, expense_fetch)
+}
+
+
 // Expense Submit
 function* expense_submit(action) {
     const access_token = yield get_access_token();
@@ -160,6 +181,7 @@ export default function* root_saga() {
         watch_login_request(),
         watch_logout_request(),
         watch_expenses_request(),
+        watch_expense_request(),
         watch_expense_submit(),
         watch_expense_delete()
     ])

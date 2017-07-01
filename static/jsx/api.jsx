@@ -82,6 +82,24 @@ function expenses_fetch(access_token) {
 }
 
 
+function expense_fetch(access_token, expense_id) {
+    const headers = get_auth_header(access_token);
+
+    return fetch(`/api/expense/${expense_id}`, {
+        method: 'GET',
+        headers
+    })
+    .then(handle_fetch_errors)
+    .then(response => response.json())
+    .then(json => {
+        return json.expense;
+    }).
+    catch(error => {
+        console.log(error.message);
+    });
+}
+
+
 function expense_submit(access_token, timestamp, amount, description) {
     const token_headers = get_auth_header(access_token);
 
@@ -138,6 +156,7 @@ const Api = {
     login_fetch,
     refresh_fetch,
     expenses_fetch,
+    expense_fetch,
     expense_submit,
     expense_delete
 }

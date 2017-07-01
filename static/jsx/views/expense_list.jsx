@@ -3,8 +3,8 @@ import moment from 'moment';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Panel from '~/components/panel.jsx';
 import { FoundationButton } from '~/components/foundation.jsx';
+import ExpensePanel from '~/components/expense.jsx';
 
 
 class ExpenseItem extends React.Component {
@@ -17,23 +17,14 @@ class ExpenseItem extends React.Component {
     handleDeleteExpense() {
         const expense_id = this.props.expense.id;
 
-        console.log(expense_id);
         this.props.expense_delete(expense_id);
     }
 
     render() {
         const expense = this.props.expense;
 
-        const dt = moment(expense.timestamp);
-
-        const delete_button = (
-            <FoundationButton onClick={this.handleDeleteExpense}>Delete</FoundationButton>
-        );
-
         return (
-            <Panel key={expense.id} onClick={this.handleDeleteExpense}>
-                {dt.format()} | {expense.amount} | {expense.description} | {delete_button}
-            </Panel>
+            <ExpensePanel expense={expense} delete_expense={this.handleDeleteExpense} />
         );
     }
 }
@@ -95,15 +86,23 @@ class ExpenseListView extends React.Component {
 
     render() {
         let expense_items = null;
-        if (this.props.expenses) {
-            expense_items = this.props.expenses.data.map(expense => {
-                const dt = moment(expense.timestamp);
+        if (this.props.expenses && this.props.expenses.data) {
+            const expenses = this.props.expenses.data;
 
-                return (
-                    <ExpenseItem key={expense.id} expense={expense} 
-                        expense_delete={this.props.expense_delete} />
-                );
-            });
+            expense_items = [];
+
+            for (let expense_id in expenses) {
+                if (expenses.hasOwnProperty(expense_id)) {
+                    const expense = expenses[expense_id];
+
+                    const dt = moment(expense.timestamp);
+
+                    expense_items.push(
+                        <ExpenseItem key={expense.id} expense={expense} 
+                            expense_delete={this.props.expense_delete} />
+                    );
+                }
+            }
         }
 
         return (

@@ -440,6 +440,19 @@ th {
   margin-top: 2em;
   margin-bottom: 2em;
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22); }
+.panel {
+  border-width: 0;
+  outline: none; }
+
+.panel {
+  border-radius: 2px; }
+
+.panel {
+  display: block;
+  background-color: #FFFFFF;
+  padding: 1.5em;
+  margin-bottom: 1em;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23); }
 .font-lg {
   font-size: 1.5em; }
 
@@ -509,16 +522,3 @@ th {
   .button.alert:hover, .button.alert:focus {
     color: #FFFFFF;
     background-color: #775555; }
-.panel {
-  border-width: 0;
-  outline: none; }
-
-.panel {
-  border-radius: 2px; }
-
-.panel {
-  display: block;
-  background-color: #FFFFFF;
-  padding: 1.5em;
-  margin-bottom: 1em;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23); }
