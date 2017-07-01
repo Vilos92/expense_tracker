@@ -21,7 +21,7 @@ class ExpenseView extends React.Component {
             description = props.expense.description;
         } else {
             dt = moment();
-            amount = 0;
+            amount = '0.00';
             description = '';
         }
 
@@ -37,6 +37,7 @@ class ExpenseView extends React.Component {
         this.handleAmountChange = this.handleAmountChange.bind(this);
         this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
         this.handleUpdateExpense = this.handleUpdateExpense.bind(this);
+        this.handleDeleteExpense = this.handleDeleteExpense.bind(this);
     }
 
     componentWillMount() {
@@ -86,6 +87,14 @@ class ExpenseView extends React.Component {
         this.setState({description: event.target.value});
     }
 
+    handleDeleteExpense() {
+        const expense_id = this.props.expense_id;
+
+        this.props.expense_delete(expense_id);
+
+        this.props.history.push('/');
+    }
+
     render() {
         const expense = this.props.expense;
 
@@ -109,6 +118,11 @@ class ExpenseView extends React.Component {
                 </FoundationButton>
 
                 <ExpensePanel expense={expense} />
+
+                <FoundationButton onClick={this.handleDeleteExpense}
+                                large={true} expanded={true}>
+                    Delete Expense
+                </FoundationButton>
             </div>
 
         );

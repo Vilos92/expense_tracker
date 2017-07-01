@@ -39,7 +39,7 @@ class ExpenseListView extends React.Component {
 
         this.state = {
             timestamp,
-            amount: 0.00,
+            amount: '0.00',
             description: '',
             start_date: '',
             end_date: ''
@@ -51,6 +51,7 @@ class ExpenseListView extends React.Component {
         this.handleAddExpense = this.handleAddExpense.bind(this);
         this.handleStartDateChange = this.handleStartDateChange.bind(this);
         this.handleEndDateChange = this.handleEndDateChange.bind(this);
+        this.handleClearDateFilter = this.handleClearDateFilter.bind(this);
     }
 
     componentWillMount() {
@@ -96,6 +97,10 @@ class ExpenseListView extends React.Component {
     }
 
     handleClearDateFilter() {
+        this.setState({
+            start_date: '',
+            end_date: ''
+        });
 
     }
 
@@ -150,11 +155,16 @@ class ExpenseListView extends React.Component {
 
         return (
             <div>
+                <h3>Create New Expense</h3>
+
+                <label>Time and Date</label>
                 <input onChange={this.handleDateChange} type="datetime-local" value={this.state.timestamp} />
 
+                <label>Amount</label>
                 <input onChange={this.handleAmountChange} type="number" 
                     value={this.state.amount} step="0.01" />
 
+                <label>Description</label>
                 <input onChange={this.handleDescriptionChange} type="text" 
                     value={this.state.description} placeholder="Description" />
 
@@ -162,6 +172,10 @@ class ExpenseListView extends React.Component {
                                 large={true} expanded={true}>
                     Add Expense
                 </FoundationButton>
+
+                <hr></hr>
+
+                <h3>Existing Expenses</h3>
 
                 <label htmlFor="start-date-filter">Start Date</label>
                 <input id="start-date-filter" type="date"
@@ -171,7 +185,8 @@ class ExpenseListView extends React.Component {
                 <input id="end-date-filter" type="date"
                     value={this.state.end_date} onChange={this.handleEndDateChange} />
 
-                <FoundationButton large={true}>
+                <FoundationButton onClick={this.handleClearDateFilter}
+                        large={true}>
                     Clear Date Filter
                 </FoundationButton>
 

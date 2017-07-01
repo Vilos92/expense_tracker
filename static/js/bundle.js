@@ -55364,7 +55364,7 @@ var ExpenseListView = function (_React$Component2) {
 
         _this2.state = {
             timestamp: timestamp,
-            amount: 0.00,
+            amount: '0.00',
             description: '',
             start_date: '',
             end_date: ''
@@ -55376,6 +55376,7 @@ var ExpenseListView = function (_React$Component2) {
         _this2.handleAddExpense = _this2.handleAddExpense.bind(_this2);
         _this2.handleStartDateChange = _this2.handleStartDateChange.bind(_this2);
         _this2.handleEndDateChange = _this2.handleEndDateChange.bind(_this2);
+        _this2.handleClearDateFilter = _this2.handleClearDateFilter.bind(_this2);
         return _this2;
     }
 
@@ -55429,7 +55430,12 @@ var ExpenseListView = function (_React$Component2) {
         }
     }, {
         key: 'handleClearDateFilter',
-        value: function handleClearDateFilter() {}
+        value: function handleClearDateFilter() {
+            this.setState({
+                start_date: '',
+                end_date: ''
+            });
+        }
     }, {
         key: 'render',
         value: function render() {
@@ -55481,9 +55487,29 @@ var ExpenseListView = function (_React$Component2) {
             return _react2.default.createElement(
                 'div',
                 null,
+                _react2.default.createElement(
+                    'h3',
+                    null,
+                    'Create New Expense'
+                ),
+                _react2.default.createElement(
+                    'label',
+                    null,
+                    'Time and Date'
+                ),
                 _react2.default.createElement('input', { onChange: this.handleDateChange, type: 'datetime-local', value: this.state.timestamp }),
+                _react2.default.createElement(
+                    'label',
+                    null,
+                    'Amount'
+                ),
                 _react2.default.createElement('input', { onChange: this.handleAmountChange, type: 'number',
                     value: this.state.amount, step: '0.01' }),
+                _react2.default.createElement(
+                    'label',
+                    null,
+                    'Description'
+                ),
                 _react2.default.createElement('input', { onChange: this.handleDescriptionChange, type: 'text',
                     value: this.state.description, placeholder: 'Description' }),
                 _react2.default.createElement(
@@ -55491,6 +55517,12 @@ var ExpenseListView = function (_React$Component2) {
                     { onClick: this.handleAddExpense,
                         large: true, expanded: true },
                     'Add Expense'
+                ),
+                _react2.default.createElement('hr', null),
+                _react2.default.createElement(
+                    'h3',
+                    null,
+                    'Existing Expenses'
                 ),
                 _react2.default.createElement(
                     'label',
@@ -55508,7 +55540,8 @@ var ExpenseListView = function (_React$Component2) {
                     value: this.state.end_date, onChange: this.handleEndDateChange }),
                 _react2.default.createElement(
                     _foundation.FoundationButton,
-                    { large: true },
+                    { onClick: this.handleClearDateFilter,
+                        large: true },
                     'Clear Date Filter'
                 ),
                 _react2.default.createElement(
@@ -55662,7 +55695,7 @@ var ExpenseView = function (_React$Component) {
             description = props.expense.description;
         } else {
             dt = (0, _moment2.default)();
-            amount = 0;
+            amount = '0.00';
             description = '';
         }
 
@@ -55678,6 +55711,7 @@ var ExpenseView = function (_React$Component) {
         _this.handleAmountChange = _this.handleAmountChange.bind(_this);
         _this.handleDescriptionChange = _this.handleDescriptionChange.bind(_this);
         _this.handleUpdateExpense = _this.handleUpdateExpense.bind(_this);
+        _this.handleDeleteExpense = _this.handleDeleteExpense.bind(_this);
         return _this;
     }
 
@@ -55734,6 +55768,15 @@ var ExpenseView = function (_React$Component) {
             this.setState({ description: event.target.value });
         }
     }, {
+        key: 'handleDeleteExpense',
+        value: function handleDeleteExpense() {
+            var expense_id = this.props.expense_id;
+
+            this.props.expense_delete(expense_id);
+
+            this.props.history.push('/');
+        }
+    }, {
         key: 'render',
         value: function render() {
             var expense = this.props.expense;
@@ -55760,7 +55803,13 @@ var ExpenseView = function (_React$Component) {
                         large: true, expanded: true },
                     'Update Expense'
                 ),
-                _react2.default.createElement(_expense2.default, { expense: expense })
+                _react2.default.createElement(_expense2.default, { expense: expense }),
+                _react2.default.createElement(
+                    _foundation.FoundationButton,
+                    { onClick: this.handleDeleteExpense,
+                        large: true, expanded: true },
+                    'Delete Expense'
+                )
             );
         }
     }]);
